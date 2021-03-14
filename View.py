@@ -18,11 +18,13 @@ class MatrixObject:
     def draw(self,x,y):
         pygame.draw.rect(self.surface,(255,255,255),(x,y,self.width,self.height))
 
-class QuestionObject:
+class TextObject:
 
     def __init__(self, surface, text, size):
+        # Make change here to change the font
+        self.font = 'arial'
         self.surface = surface
-        font1 = pygame.font.SysFont('arial', size)
+        font1 = pygame.font.SysFont(self.font, size)
         self.text = font1.render(text, True, (0,0,0))
     
     def draw(self, x, y):
@@ -46,5 +48,5 @@ class View:
         # Not complete, only draw a square at this point
         matrix1.draw(   self.mid_x - matrix1.width / 2,
                         self.mid_y - matrix1.height / 2)
-        question_text = QuestionObject(self.surface, text, 24)
+        question_text = TextObject(self.surface, text, 24)
         question_text.draw(self.mid_x - 150, self.mid_y - 150)
