@@ -22,7 +22,7 @@ class Controller:
     def run(self):
         # Test Code Begin
         self.get_new_exercise(1)
-        text = self.exercise[0]
+        text = self.exercise[0].get_text()
         # Test Code End
 
         while True:

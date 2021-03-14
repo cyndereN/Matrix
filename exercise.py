@@ -40,20 +40,20 @@ class Exercise:
     DETERMINANT             6             Integer
     """
 
-    def __init__(self,size = None):
+    def __init__(self):
         self.calculator = calculator()
-        self.question_set_size = size
+        self.question_set_size = -1
         self.question_set = []
-        if size:
-            self.generate_exercise()
 
-    def get_exercise(self):
-        return self.question_set
+    # def get_exercise(self):
+    #     return self.question_set
 
-    def generate_exercise(self):
-        for i in range(self.question_set_size):
+    def generate_exercise(self,size):
+        self.question_set_size = size
+        for i in range(size):
             question_type = randint(ADDITION,INVERSE)
             self.question_set.append(self.generate_question(question_type))
+        return self.question_set
 
     def generate_question(self,question_type,Matrix1 = None,Matrix2 = None):
         # These two use another way to generate Matrix and answer
@@ -85,7 +85,6 @@ class Exercise:
             Matrix2 = self.generate_twoD_lst(question_type)
         while(question_type == INVERSE and self.calculator.determinant(Matrix1) == 0):
             Matrix1 = self.generate_twoD_lst(question_type)
-        print(Matrix1, Matrix2)
         return Matrix1, Matrix2
     
     def __check_value_is_integer(self,Matrix1):
@@ -258,7 +257,8 @@ class Exercise:
         return q
 
 if __name__ == "__main__":
-    e = Exercise(10)
+    e = Exercise()
+    e.generate_exercise(10)
     q = e.get_exercise()
     for x in q:
         print(x.get_text())
