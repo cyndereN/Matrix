@@ -1,4 +1,3 @@
-
 class Question:
 
     def __init__(self, question_type, text, answer, matrix1, matrix2=None):
