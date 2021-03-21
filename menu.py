@@ -1,9 +1,10 @@
 import pygame
+from settings import *
 
 class Menu():
     def __init__(self, game):
         self.game = game
-        self.mid_w, self.mid_h = self.game.DISPLAY_W/2, self.game.DISPLAY_H/2
+        self.mid_w, self.mid_h = DISPLAY_W/2, DISPLAY_H/2
         self.run_display = True
         self.cursor_rect = pygame.Rect(0, 0, 30, 30)
         self.offset = -300
@@ -22,7 +23,7 @@ class MainMenu(Menu):
         self.state = "Start"
         self.startx, self.starty = self.mid_w, self.mid_h + 40
         self.importx, self.importy = self.mid_w, self.mid_h + 80
-        self.creatx, self.creaty = self.mid_w, self.mid_h + 120
+        self.createx, self.createy = self.mid_w, self.mid_h + 120
         self.rankingx, self.rankingy = self.mid_w, self.mid_h + 160
         self.creditx, self.credity = self.mid_w, self.mid_h + 200
         self.cursor_rect.midtop = (self.startx + self.offset, self.starty)
@@ -32,11 +33,12 @@ class MainMenu(Menu):
         while self.run_display:
             self.game.check_events()
             self.check_input()
-            self.game.display.fill(self.game.BLACK)
-            self.game.draw_text('Matrix', 80, self.game.DISPLAY_W / 2, self.game.DISPLAY_H / 2 - 120)
+            self.game.display.fill(BLACK)
+            self.game.snoweffect()
+            self.game.draw_text('Matrix', 80, self.mid_w, self.mid_h - 120)
             self.game.draw_text("Start Exercise", 30, self.startx, self.starty)
             self.game.draw_text("Import Exercise", 30, self.importx, self.importy)
-            self.game.draw_text("Creat Exercise", 30, self.creatx, self.creaty)
+            self.game.draw_text("Create Exercise", 30, self.createx, self.createy)
             self.game.draw_text("Rankings", 30, self.rankingx, self.rankingy)
             self.game.draw_text("Credits", 30, self.creditx, self.credity)
             self.draw_cursor()
@@ -48,9 +50,9 @@ class MainMenu(Menu):
                 self.cursor_rect.midtop = (self.importx + self.offset, self.importy)
                 self.state = 'Import'
             elif self.state == 'Import':
-                self.cursor_rect.midtop = (self.creatx + self.offset, self.creaty)
-                self.state = 'Creat'
-            elif self.state == 'Creat':
+                self.cursor_rect.midtop = (self.createx + self.offset, self.createy)
+                self.state = 'Create'
+            elif self.state == 'Create':
                 self.cursor_rect.midtop = (self.rankingx + self.offset, self.rankingy)
                 self.state = 'Ranking'
             elif self.state == 'Ranking':
@@ -67,12 +69,12 @@ class MainMenu(Menu):
             elif self.state == 'Import':
                 self.cursor_rect.midtop = (self.startx + self.offset, self.starty)
                 self.state = 'Start'
-            elif self.state == 'Creat':
+            elif self.state == 'Create':
                 self.cursor_rect.midtop = (self.importx + self.offset, self.importy)
                 self.state = 'Import'
             elif self.state == 'Ranking':
-                self.cursor_rect.midtop = (self.creatx + self.offset, self.creaty)
-                self.state = 'Creat'
+                self.cursor_rect.midtop = (self.createx + self.offset, self.createy)
+                self.state = 'Create'
             elif self.state == 'Credit':
                 self.cursor_rect.midtop = (self.rankingx + self.offset, self.rankingy)
                 self.state = 'Ranking'
@@ -84,7 +86,7 @@ class MainMenu(Menu):
                 self.game.start_exercise()
             elif self.state == 'Import':
                 self.game.import_exercise()
-            elif self.state == 'Creat':
+            elif self.state == 'Create':
                 self.game.create_exercise()
             elif self.state == 'Ranking':
                 self.game.rankings()
