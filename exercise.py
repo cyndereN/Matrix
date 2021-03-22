@@ -192,6 +192,8 @@ class Exercise:
                 question_type_from_file == SUBTRACTION or
                 question_type_from_file == MULTIPLICATION):
                 matrix2_from_file = self.to_matrix(f.readline(),f.readline())
+            else:
+                matrix2_from_file = None
             self.question_set.append(
                 self.generate_question(question_type_from_file,matrix1_from_file,matrix2_from_file))
         f.close()
