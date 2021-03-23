@@ -52,7 +52,7 @@ def getMatrixDimensions(matrix):
 def drawMatrixQuestion(matrix):
     numFont = pygame.font.SysFont('Arial', 15)
     questionText = matrix.get_text()
-    pygame.draw.rect(window, WHITE, (DISPLAY_W/2-120, 110, 200, 40))
+    pygame.draw.rect(window, WHITE, (DISPLAY_W/2-120, 110, 210, 40))
     text = numFont.render(questionText, True, BLACK)
     window.blit(text, (DISPLAY_W/2-110, 120))
 

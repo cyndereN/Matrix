@@ -11,7 +11,9 @@ EIGENVALUE = 4
 INVERSE = 5
 DETERMINANT = 6
 Text = [
-    "Find the result of this calculation",
+    ["Find the sum of this calculation",
+     "Find the difference of this calculation",
+     "Find the product of this calculation",],
     "Find the eigenvector of this matrix",
     "Find the eigenvalue of this matrix",
     "Find the inverse of this matrix",
@@ -214,19 +216,19 @@ class Exercise:
     def __addition(self,Matrix1,Matrix2):
         answer = self.calculator.addition(Matrix1,Matrix2)
         self.__round_matrix(answer)
-        q = Question(ADDITION,Text[0],answer, Matrix1, Matrix2)
+        q = Question(ADDITION,Text[0][0],answer, Matrix1, Matrix2)
         return q
 
     def __subtraction(self,Matrix1,Matrix2):
         answer = self.calculator.subtraction(Matrix1,Matrix2)
         self.__round_matrix(answer)
-        q = Question(SUBTRACTION,Text[0],answer, Matrix1, Matrix2)
+        q = Question(SUBTRACTION,Text[0][1],answer, Matrix1, Matrix2)
         return q
 
     def __multiplication(self,Matrix1,Matrix2):
         answer = self.calculator.multiplication(Matrix1,Matrix2)
         self.__round_matrix(answer)
-        q = Question(MULTIPLICATION,Text[0],answer, Matrix1, Matrix2)
+        q = Question(MULTIPLICATION,Text[0][2],answer, Matrix1, Matrix2)
         return q
 
     def __eigenvector(self,Matrix1):
