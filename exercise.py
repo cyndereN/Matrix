@@ -277,9 +277,8 @@ class Exercise:
         return q
 
 if __name__ == "__main__":
-    e = Exercise()
-    q1 = e.generate_exercise(5)
-    q2 = e.import_exercise("test.txt")
+    q1 = Exercise().generate_exercise(5)
+    q2 = Exercise().import_exercise("test.txt")
     print("==================== Random ======================")
     for x in q1:
         print("Text:        " + str(x.get_text()))
