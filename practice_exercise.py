@@ -49,6 +49,13 @@ def getMatrixDimensions(matrix):
     return numpy.array(matrix).shape
 
 
+def drawMatrixQuestion(matrix):
+    numFont = pygame.font.SysFont('Arial', 15)
+    questionText = matrix.get_text()
+    pygame.draw.rect(window, WHITE, (DISPLAY_W/2-120, 110, 200, 40))
+    text = numFont.render(questionText, True, BLACK)
+    window.blit(text, (DISPLAY_W/2-110, 120))
+
 def drawMatrix(matrix):
     matrix1, matrix2 = matrix.get_matrices()[0], matrix.get_matrices()[1]
     numFont = pygame.font.SysFont('Arial', 15)
@@ -105,6 +112,7 @@ def draw_matrix_window(matrix):
     window.blit(prevText, (DISPLAY_W/2-210 + 21, 40 + 12))
     window.blit(nextText, (DISPLAY_W/2+50 + 40, 40 + 12))
 
+    drawMatrixQuestion(matrix)
     drawMatrix(matrix)
     pygame.display.set_caption("Import matrix file")
     pygame.display.flip()
