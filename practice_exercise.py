@@ -21,7 +21,8 @@ filePath = ""
 matrixList = []
 
 # init buttons and textbox
-loadButton = pygame.Rect(DISPLAY_W/2-50, DISPLAY_H/2, 100, 50)
+loadButton = pygame.Rect(DISPLAY_W/2-50, DISPLAY_H/2-100, 100, 50)
+generateButton = pygame.Rect(DISPLAY_W/2-70, DISPLAY_H/2+100, 140, 50)
 smallLoadButton = pygame.Rect(20, 20, 80, 40)
 prevButton = pygame.Rect(DISPLAY_W/2-210, 40, 120, 40)
 nextButton = pygame.Rect(DISPLAY_W/2+50, 40, 120, 40)
@@ -35,6 +36,7 @@ answerFont = pygame.font.SysFont('Calibri', 17)
 
 # init text with corresponding fonts
 loadText = customFont.render("Load", True, WHITE)
+generateText = customFont.render("Generate", True, WHITE)
 smallLoadText = smallFont.render("Load", True, WHITE)
 prevText = smallFont.render("Previous", True, WHITE)
 nextText = smallFont.render("Next", True, WHITE)
@@ -53,9 +55,13 @@ def prompt_file():
 
 
 def loadData(filePath):
-    exercise = Exercise()
-    questionList = exercise.import_exercise(filePath)
-    return questionList
+    e = Exercise()
+    return e.import_exercise(filePath)
+
+
+def generateData():
+    e = Exercise()
+    return e.generate_exercise(5)
 
 
 # helper function to get rows x cols of matrix
@@ -155,9 +161,12 @@ def draw_window():
 
     window.fill(pygame.color.Color("grey"))
     pygame.draw.rect(window, RED, loadButton)
-    window.blit(loadText, (DISPLAY_W/2-50 + 23, DISPLAY_H/2 + 15))
+    pygame.draw.rect(window, RED, generateButton)
+    window.blit(loadText, (DISPLAY_W/2-50 + 23, DISPLAY_H/2-100 + 15))
+    window.blit(generateText, (DISPLAY_W/2-70 + 17, DISPLAY_H/2+100 + 15))
     pygame.display.set_caption("Load Matrix From File")
     pygame.display.update()
+
 
 # draw matrix to screen
 def draw_matrix_window(matrix):
@@ -175,6 +184,7 @@ def draw_matrix_window(matrix):
     drawMatrixAnswer(matrix)
     pygame.display.set_caption("Practice Questions")
     pygame.display.flip()
+
 
 # main window
 def main():
@@ -199,6 +209,12 @@ def main():
                 if loadButton.collidepoint(mouse_pos) or smallLoadButton.collidepoint(mouse_pos):
                     prompt_file()
                     matrixList = loadData(filePath)
+                    draw_matrix_window(matrixList[0])
+                    inputText = ""
+                    answerSubmitted = False
+
+                elif generateButton.collidepoint(mouse_pos):
+                    matrixList = generateData()
                     draw_matrix_window(matrixList[0])
                     inputText = ""
                     answerSubmitted = False
