@@ -54,7 +54,7 @@ class Exercise:
         self.question_set.clear()
         self.question_set_size = size
         for i in range(size):
-            question_type = randint(ADDITION,INVERSE)
+            question_type = randint(ADDITION,DETERMINANT)
             self.question_set.append(self.generate_question(question_type))
         return self.question_set
 
@@ -195,8 +195,6 @@ class Exercise:
                 question_type_from_file == SUBTRACTION or
                 question_type_from_file == MULTIPLICATION):
                 matrix2_from_file = self.to_matrix(f.readline(),f.readline())
-            else:
-                matrix2_from_file = None
             self.question_set.append(
                 self.generate_question(question_type_from_file,matrix1_from_file,matrix2_from_file))
         f.close()
@@ -291,6 +289,7 @@ if __name__ == "__main__":
         print("-----------------------------------------\n")
     print("==================== From File ======================")
     for x in q2:
+        test = x.get_answer()
         print("Text:        " + str(x.get_text()))
         print("Type:        " + str(x.get_question_type()))
         print("Matrices:    " + str(x.get_matrices()))

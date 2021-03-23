@@ -2,6 +2,9 @@ import tkinter
 import tkinter.filedialog
 import pygame
 import numpy
+import ast
+from functools import reduce
+from operator import add
 from pygame._freetype import *
 from exercise import Exercise
 from settings import *
@@ -59,6 +62,22 @@ def loadData(filePath):
 # helper function to get rows x cols of matrix
 def getMatrixDimensions(matrix):
     return numpy.array(matrix).shape
+
+
+def roundTo2Decimals(answer):
+    return [round(x, 2) if not isinstance(x, list) else roundTo2Decimals(x) for x in answer]
+
+def submitAnswer(inputText, matrix):
+    lst = ast.literal_eval(inputText)
+    answer = reduce(add, matrix.get_answer())
+    rounded = roundTo2Decimals(answer)
+    print(lst)
+    print(answer)
+    print(rounded)
+    if lst == rounded:
+        return True
+    else:
+        return rounded
 
 
 # display question text on screen
@@ -201,6 +220,7 @@ def main():
                 elif submitButton.collidepoint(mouse_pos):
                     pygame.draw.rect(window, WHITE, answerInputTextBox)
                     drawAnswerText(inputText)
+                    submitAnswer(inputText, matrixList[exerciseIndex])
                     inputBoxActive = False
                     answerSubmitted = True
 
@@ -209,6 +229,7 @@ def main():
                 if event.key == pygame.K_RETURN:
                     pygame.draw.rect(window, WHITE, answerInputTextBox)
                     drawAnswerText(inputText)
+                    submitAnswer(inputText, matrixList[exerciseIndex])
                     inputBoxActive = False
                     answerSubmitted = True
 
