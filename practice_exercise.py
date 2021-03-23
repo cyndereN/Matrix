@@ -50,17 +50,34 @@ def loadData(filePath):
 def getMatrixDimensions(matrix):
     return numpy.array(matrix).shape
 
-def drawMatrix(matrix1):
-    rows, cols = getMatrixDimensions(matrix1)
+def drawMatrix(matrix1, matrix2=None):
     numFont = pygame.font.SysFont('Arial', 15)
-    for row in range(rows):
-        for col in range(cols):
-            color = WHITE
-            gridX = (MARGIN+GRIDBOX_W)*col+MARGIN+DISPLAY_W/2-100
-            gridY = (MARGIN+GRIDBOX_H)*row+MARGIN+200
-            pygame.draw.rect(window, color, [gridX, gridY,GRIDBOX_W,GRIDBOX_H])
-            text = numFont.render(str(matrix1[row][col]), True, BLACK)
-            window.blit(text, (gridX+(GRIDBOX_W/2 - text.get_width()/2), gridY+(GRIDBOX_H/2 - text.get_height()/2)))
+    if matrix2 is None:
+        rows, cols = getMatrixDimensions(matrix1)
+        for row in range(rows):
+            for col in range(cols):
+                gridX = (MARGIN+GRIDBOX_W)*col+MARGIN+DISPLAY_W/2-100
+                gridY = (MARGIN+GRIDBOX_H)*row+MARGIN+200
+                pygame.draw.rect(window, WHITE, [gridX, gridY,GRIDBOX_W,GRIDBOX_H])
+                text = numFont.render(str(matrix1[row][col]), True, BLACK)
+                window.blit(text, (gridX+(GRIDBOX_W/2 - text.get_width()/2), gridY+(GRIDBOX_H/2 - text.get_height()/2)))
+    else:
+        rows1, cols1 = getMatrixDimensions(matrix1)
+        rows2, cols2 = getMatrixDimensions(matrix2)
+        for row in range(rows1):
+            for col in range(cols1):
+                gridX = (MARGIN+GRIDBOX_W)*col+MARGIN+DISPLAY_W/4
+                gridY = (MARGIN+GRIDBOX_H)*row+MARGIN+200
+                pygame.draw.rect(window, WHITE, [gridX, gridY,GRIDBOX_W,GRIDBOX_H])
+                text = numFont.render(str(matrix1[row][col]), True, BLACK)
+                window.blit(text, (gridX+(GRIDBOX_W/2 - text.get_width()/2), gridY+(GRIDBOX_H/2 - text.get_height()/2)))
+        for row in range(rows2):
+            for col in range(cols2):
+                gridX = (MARGIN+GRIDBOX_W)*col+MARGIN+DISPLAY_W/2+100
+                gridY = (MARGIN+GRIDBOX_H)*row+MARGIN+200
+                pygame.draw.rect(window, WHITE, [gridX, gridY,GRIDBOX_W,GRIDBOX_H])
+                text = numFont.render(str(matrix1[row][col]), True, BLACK)
+                window.blit(text, (gridX+(GRIDBOX_W/2 - text.get_width()/2), gridY+(GRIDBOX_H/2 - text.get_height()/2)))
 
 
 def draw_window():
@@ -70,7 +87,7 @@ def draw_window():
     window.blit(text, (100+23,100+15))
 
     for x in matrixList:
-        drawMatrix(x.get_matrices()[0])
+        drawMatrix(x.get_matrices()[0], x.get_matrices()[1])
     ## update title to show filename
     pygame.display.set_caption("Load file")
     # show surface
