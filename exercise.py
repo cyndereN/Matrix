@@ -188,6 +188,7 @@ class Exercise:
         for i in range(0,self.exercise_set_size):
             question_type_from_file = int(f.readline())
             matrix1_from_file = self.to_matrix(f.readline(),f.readline())
+            matrix2_from_file = None
             if  (question_type_from_file == ADDITION or
                 question_type_from_file == SUBTRACTION or
                 question_type_from_file == MULTIPLICATION):

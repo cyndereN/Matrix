@@ -14,7 +14,7 @@ class Menu():
 
     def blit_screen(self):
         self.game.window.blit(self.game.display, (0,0))
-        pygame.display.update()
+        pygame.display.flip()
         self.game.reset_keys()
 
 class MainMenu(Menu):
@@ -35,12 +35,12 @@ class MainMenu(Menu):
             self.check_input()
             self.game.display.fill(BLACK)
             self.game.snoweffect()
-            self.game.draw_text('Matrix', 80, self.mid_w, self.mid_h - 120)
-            self.game.draw_text("Start Exercise", 30, self.startx, self.starty)
-            self.game.draw_text("Import Exercise", 30, self.importx, self.importy)
-            self.game.draw_text("Create Exercise", 30, self.createx, self.createy)
-            self.game.draw_text("Rankings", 30, self.rankingx, self.rankingy)
-            self.game.draw_text("Credits", 30, self.creditx, self.credity)
+            self.game.draw_text('Matrix', 100, self.mid_w, self.mid_h - 120)
+            self.game.draw_text_2("Start Exercise", 30, self.startx, self.starty)
+            self.game.draw_text_2("Import Exercise", 30, self.importx, self.importy)
+            self.game.draw_text_2("Create Exercise", 30, self.createx, self.createy)
+            self.game.draw_text_2("Rankings", 30, self.rankingx, self.rankingy)
+            self.game.draw_text_2("Credits", 30, self.creditx, self.credity)
             self.draw_cursor()
             self.blit_screen()
 
@@ -91,5 +91,29 @@ class MainMenu(Menu):
             elif self.state == 'Ranking':
                 self.game.rankings()
             elif self.state == 'Credit':
-                self.game.credits()
+                self.game.curr_menu = self.game.credits
             self.run_display = False
+
+# Make credits inheritates from menu
+class CreditsMenu(Menu):
+    def __init__(self, game):
+        Menu.__init__(self, game)
+
+    def display_menu(self):
+        self.run_display = True
+        while self.run_display:
+            self.game.check_events()
+            if self.game.BACK_KEY:
+                self.game.curr_menu = self.game.main_menu
+                self.run_display = False
+            self.game.display.fill(BLACK)
+            self.game.snoweffect()
+            self.game.draw_text("CREDITS", 60, self.mid_w, DISPLAY_H / 4 - 40)
+            self.game.draw_text_2("Game made by", 22, self.mid_w, DISPLAY_H / 2 - 80)
+            self.game.draw_text_2("Ce Cao, Darryl Ng, Leran Li, Yan Lai", 22, self.mid_w, DISPLAY_H / 2 - 20)
+            self.game.draw_text_2("Press BACKSPACE to return", 22, self.mid_w, DISPLAY_H * 3 / 4 + 60)
+            self.game.draw_text_2("Font: \"Press Start 2P\" by codeman38 ", 15, self.mid_w, DISPLAY_H / 2 + 50)
+            self.game.draw_text_2("Font: \"8-bit wonder\" by Joiro Hatgaya ", 15, self.mid_w, DISPLAY_H / 2 + 80)
+            self.game.draw_text_2("Music Created with BeepBox", 15, self.mid_w,DISPLAY_H / 2 + 110)
+            self.game.draw_text_2("Sound Effects Created with Bfxr", 15, self.mid_w, DISPLAY_H / 2 + 140)
+            self.blit_screen()
