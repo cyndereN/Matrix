@@ -263,7 +263,6 @@ class Exercise:
 
     def __inverse(self,Matrix1):
         answer = self.calculator.inverse(Matrix1)
-        print(answer)
         self.__round_matrix(answer)
         q = Question(INVERSE,Text[3],answer,Matrix1)
         return q

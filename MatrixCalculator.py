@@ -41,8 +41,6 @@ class calculator:
     def eigenvalue(self,Matrix1):
         m1 = np.array(Matrix1)
         values = np.linalg.eigvals(m1).tolist()
-        for value in values:
-            value = float(value)
         return list(values)
 
     def inverse(self,Matrix1):

@@ -29,6 +29,7 @@ prevButton = pygame.Rect(DISPLAY_W/2-210, 40, 120, 40)
 nextButton = pygame.Rect(DISPLAY_W/2+50, 40, 120, 40)
 answerInputTextBox = pygame.Rect(350, 445, 400, 30)
 submitButton = pygame.Rect(DISPLAY_W/2-60, 520, 120, 40)
+endButton = pygame.Rect(DISPLAY_W-140, 80, 120, 40)
 
 # init fonts
 customFont = pygame.font.SysFont('comicsans', 35)
@@ -43,7 +44,7 @@ prevText = smallFont.render("Previous", True, WHITE)
 nextText = smallFont.render("Next", True, WHITE)
 answerText = smallFont.render("Answer: ", True, BLACK)
 submitText = smallFont.render("Submit", True, WHITE)
-
+endText = smallFont.render("End Game", True, WHITE)
 
 
 def prompt_file():
@@ -76,14 +77,13 @@ def roundTo2Decimals(answer):
 
 def submitAnswer(inputText, matrix):
     lst = ast.literal_eval(inputText)
-    if matrix.get_question_type() != 5:
+    if matrix.get_question_type() == 3 or matrix.get_question_type() == 4:
         answer = reduce(add, matrix.get_answer())
     else:
         answer = matrix.get_answer()
-    rounded = roundTo2Decimals(answer)
-    # print(lst)
-    # print(answer)
-    # print(rounded)
+    if matrix.get_question_type() == 6: rounded = answer
+    else: rounded = roundTo2Decimals(answer)
+
     return lst==rounded, rounded
 
 
@@ -133,6 +133,7 @@ def drawMatrix(matrix):
                 text = numFont.render(str(matrix2[row][col]), True, BLACK)
                 window.blit(text, (gridX+(GRIDBOX_W/2 - text.get_width()/2), gridY+(GRIDBOX_H/2 - text.get_height()/2)))
 
+
 # display texts related to answer
 def drawMatrixAnswer(matrix):
     matrixType = matrix.get_question_type()
@@ -141,6 +142,7 @@ def drawMatrixAnswer(matrix):
     pygame.draw.rect(window, WHITE, answerInputTextBox)
     pygame.draw.rect(window, RED, submitButton)
     window.blit(submitText, (DISPLAY_W/2-35, 530))
+
 
 # display answer textfield
 def drawAnswerText(inputText):
@@ -182,12 +184,14 @@ def draw_matrix_window(matrix):
     pygame.draw.rect(window, RED, smallLoadButton)
     pygame.draw.rect(window, RED, prevButton)
     pygame.draw.rect(window, RED, nextButton)
+    pygame.draw.rect(window, RED, endButton)
 
     scoreText = smallFont.render("Score: " + str(score), True, BLACK)
     window.blit(smallLoadText, (20 + 21, 20 + 13))
     window.blit(prevText, (DISPLAY_W/2-210 + 21, 40 + 12))
     window.blit(nextText, (DISPLAY_W/2+50 + 40, 40 + 12))
     window.blit(scoreText, (DISPLAY_W-100, 50))
+    window.blit(endText, (DISPLAY_W-120, 90))
 
     drawMatrixQuestion(matrix)
     drawMatrix(matrix)
@@ -195,6 +199,15 @@ def draw_matrix_window(matrix):
     pygame.display.set_caption("Practice Questions")
     pygame.display.flip()
 
+
+def drawEndScreen():
+    window.fill(pygame.color.Color("grey"))
+    scoreText = smallFont.render("Score: " + str(score), True, BLACK)
+    window.blit(scoreText, (DISPLAY_W/2-50, DISPLAY_H/2-100))
+    correctText = smallFont.render("Number of correct questions: " + str(score//500), True, BLACK)
+    window.blit(correctText, (DISPLAY_W/2-140, DISPLAY_H/2+100))
+    pygame.display.set_caption("Summary Page")
+    pygame.display.flip()
 
 # main window
 def main():
@@ -262,6 +275,9 @@ def main():
                     inputBoxActive = False
                     answerSubmitted = True
                     drawResult(result, answer)
+
+                elif endButton.collidepoint(mouse_pos):
+                    drawEndScreen()
 
             # if key pressed and input box has been clicked
             elif event.type == pygame.KEYDOWN and inputBoxActive:
