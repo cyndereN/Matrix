@@ -262,11 +262,9 @@ class Exercise:
         return q
 
     def __inverse(self,Matrix1):
-        answer = []
-        answer_temp = self.calculator.inverse(Matrix1)
-        answer.append(round(answer_temp[0]))
-        answer.append(answer_temp[1])
-        self.__round_matrix(answer[1])
+        answer = self.calculator.inverse(Matrix1)
+        print(answer)
+        self.__round_matrix(answer)
         q = Question(INVERSE,Text[3],answer,Matrix1)
         return q
 

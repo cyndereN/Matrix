@@ -46,12 +46,9 @@ class calculator:
         return list(values)
 
     def inverse(self,Matrix1):
-        r = len(Matrix1)
         m1 = np.array(Matrix1)
-        det_m1 = self.determinant(m1)
-        m2 = det_m1 * np.eye(r,r)
-        inverse_m = np.linalg.solve(m1,m2).astype(float).tolist()
-        return list((det_m1, inverse_m))
+        inverse_m = np.linalg.inv(m1).astype(float).tolist()
+        return list(inverse_m)
 
     def determinant(self,Matrix1):
         m1 = np.array(Matrix1)

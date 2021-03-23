@@ -19,6 +19,7 @@ window = pygame.display.set_mode((DISPLAY_W, DISPLAY_H))
 clock = pygame.time.Clock()
 filePath = ""
 matrixList = []
+score = 0
 
 # init buttons and textbox
 loadButton = pygame.Rect(DISPLAY_W/2-50, DISPLAY_H/2-100, 100, 50)
@@ -42,6 +43,7 @@ prevText = smallFont.render("Previous", True, WHITE)
 nextText = smallFont.render("Next", True, WHITE)
 answerText = smallFont.render("Answer: ", True, BLACK)
 submitText = smallFont.render("Submit", True, WHITE)
+
 
 
 def prompt_file():
@@ -74,11 +76,14 @@ def roundTo2Decimals(answer):
 
 def submitAnswer(inputText, matrix):
     lst = ast.literal_eval(inputText)
-    answer = reduce(add, matrix.get_answer())
+    if matrix.get_question_type() != 5:
+        answer = reduce(add, matrix.get_answer())
+    else:
+        answer = matrix.get_answer()
     rounded = roundTo2Decimals(answer)
-    print(lst)
-    print(answer)
-    print(rounded)
+    # print(lst)
+    # print(answer)
+    # print(rounded)
     return lst==rounded, rounded
 
 
@@ -131,6 +136,7 @@ def drawMatrix(matrix):
 # display texts related to answer
 def drawMatrixAnswer(matrix):
     matrixType = matrix.get_question_type()
+    if matrixType <= 3: pass
     window.blit(answerText, (250, 450))
     pygame.draw.rect(window, WHITE, answerInputTextBox)
     pygame.draw.rect(window, RED, submitButton)
@@ -144,9 +150,11 @@ def drawAnswerText(inputText):
 
 
 def drawResult(result, answer):
+    global score
     text = ""
     if result:
         text = "Your answer is correct!"
+        score += 500
         displayText = answerFont.render(text, True, BLACK)
         window.blit(displayText, (355, 490))
     else:
@@ -175,9 +183,11 @@ def draw_matrix_window(matrix):
     pygame.draw.rect(window, RED, prevButton)
     pygame.draw.rect(window, RED, nextButton)
 
+    scoreText = smallFont.render("Score: " + str(score), True, BLACK)
     window.blit(smallLoadText, (20 + 21, 20 + 13))
     window.blit(prevText, (DISPLAY_W/2-210 + 21, 40 + 12))
     window.blit(nextText, (DISPLAY_W/2+50 + 40, 40 + 12))
+    window.blit(scoreText, (DISPLAY_W-100, 50))
 
     drawMatrixQuestion(matrix)
     drawMatrix(matrix)
@@ -189,7 +199,7 @@ def draw_matrix_window(matrix):
 # main window
 def main():
     running = True
-    global matrixList
+    global matrixList, score
     exerciseIndex = 0
     inputText = ""
     inputBoxActive = False
@@ -210,6 +220,7 @@ def main():
                     prompt_file()
                     matrixList = loadData(filePath)
                     draw_matrix_window(matrixList[0])
+                    exerciseIndex = 0
                     inputText = ""
                     answerSubmitted = False
 
