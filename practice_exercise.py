@@ -15,14 +15,18 @@ clock = pygame.time.Clock()
 filePath = ""
 matrixList = []
 
-loadButton = pygame.Rect(100, 100, 100, 50)
-smallLoadButton = pygame.Rect(50, 50, 100, 50)
-prevButton = pygame.Rect(DISPLAY_W/2-290, 100, 120, 50)
-nextButton = pygame.Rect(DISPLAY_W/2+120, 100, 100, 50)
+loadButton = pygame.Rect(DISPLAY_W/2-50, DISPLAY_H/2, 100, 50)
+smallLoadButton = pygame.Rect(20, 20, 80, 40)
+prevButton = pygame.Rect(DISPLAY_W/2-210, 40, 120, 40)
+nextButton = pygame.Rect(DISPLAY_W/2+50, 40, 120, 40)
+
 customFont = pygame.font.SysFont('comicsans', 35)
+smallFont = pygame.font.SysFont('comicsans', 25)
+
 loadText = customFont.render("Load", True, WHITE)
-prevText = customFont.render("Previous", True, WHITE)
-nextText = customFont.render("Next", True, WHITE)
+smallLoadText = smallFont.render("Load", True, WHITE)
+prevText = smallFont.render("Previous", True, WHITE)
+nextText = smallFont.render("Next", True, WHITE)
 
 
 def prompt_file():
@@ -45,7 +49,8 @@ def getMatrixDimensions(matrix):
     return numpy.array(matrix).shape
 
 
-def drawMatrix(matrix1, matrix2=None):
+def drawMatrix(matrix):
+    matrix1, matrix2 = matrix.get_matrices()[0], matrix.get_matrices()[1]
     numFont = pygame.font.SysFont('Arial', 15)
 
     if matrix2 is None:
@@ -84,7 +89,7 @@ def draw_window():
 
     window.fill(pygame.color.Color("grey"))     # fill background
     pygame.draw.rect(window, (255, 0, 0), loadButton)   # load button
-    window.blit(loadText, (100 + 23, 100 + 15))         # load text
+    window.blit(loadText, (DISPLAY_W/2-50 + 23, DISPLAY_H/2 + 15))         # load text
     pygame.display.set_caption("Import matrix file")
 
     pygame.display.update()
@@ -95,10 +100,12 @@ def draw_matrix_window(matrix):
     pygame.draw.rect(window, (255, 0, 0), smallLoadButton)
     pygame.draw.rect(window, (255, 0, 0), prevButton)
     pygame.draw.rect(window, (255, 0, 0), nextButton)
-    window.blit(loadText, (50 + 23, 50 + 15))
-    window.blit(prevText, (DISPLAY_W/2-300 + 20, 100 + 15))
-    window.blit(nextText, (DISPLAY_W/2+120 + 23, 100 + 15))
-    drawMatrix(matrix.get_matrices()[0], matrix.get_matrices()[1])
+
+    window.blit(smallLoadText, (20 + 21, 20 + 13))
+    window.blit(prevText, (DISPLAY_W/2-210 + 21, 40 + 12))
+    window.blit(nextText, (DISPLAY_W/2+50 + 40, 40 + 12))
+
+    drawMatrix(matrix)
     pygame.display.set_caption("Import matrix file")
     pygame.display.flip()
 
