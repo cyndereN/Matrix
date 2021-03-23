@@ -8,6 +8,7 @@ from settings import *
 
 GRIDBOX_H, GRIDBOX_W = 50, 50
 MARGIN = 5
+RED = (255, 0, 0)
 TEXTBOX_ACTIVE = (137, 209, 254)
 TEXTBOX_MAX_LENGTH = 40
 
@@ -23,6 +24,7 @@ smallLoadButton = pygame.Rect(20, 20, 80, 40)
 prevButton = pygame.Rect(DISPLAY_W/2-210, 40, 120, 40)
 nextButton = pygame.Rect(DISPLAY_W/2+50, 40, 120, 40)
 answerInputTextBox = pygame.Rect(350, 445, 400, 30)
+submitButton = pygame.Rect(DISPLAY_W/2-60, 520, 120, 40)
 
 # init fonts
 customFont = pygame.font.SysFont('comicsans', 35)
@@ -35,6 +37,7 @@ smallLoadText = smallFont.render("Load", True, WHITE)
 prevText = smallFont.render("Previous", True, WHITE)
 nextText = smallFont.render("Next", True, WHITE)
 answerText = smallFont.render("Answer: ", True, BLACK)
+submitText = smallFont.render("Submit", True, WHITE)
 
 
 def prompt_file():
@@ -109,6 +112,8 @@ def drawMatrixAnswer(matrix):
     matrixType = matrix.get_question_type()
     window.blit(answerText, (250, 450))
     pygame.draw.rect(window, WHITE, answerInputTextBox)
+    pygame.draw.rect(window, RED, submitButton)
+    window.blit(submitText, (DISPLAY_W/2-35, 530))
 
 # display answer textfield
 def drawAnswerText(inputText):
@@ -120,7 +125,7 @@ def drawAnswerText(inputText):
 def draw_window():
 
     window.fill(pygame.color.Color("grey"))
-    pygame.draw.rect(window, (255, 0, 0), loadButton)
+    pygame.draw.rect(window, RED, loadButton)
     window.blit(loadText, (DISPLAY_W/2-50 + 23, DISPLAY_H/2 + 15))
     pygame.display.set_caption("Load Matrix From File")
     pygame.display.update()
@@ -128,9 +133,9 @@ def draw_window():
 # draw matrix to screen
 def draw_matrix_window(matrix):
     window.fill(pygame.color.Color("grey"))
-    pygame.draw.rect(window, (255, 0, 0), smallLoadButton)
-    pygame.draw.rect(window, (255, 0, 0), prevButton)
-    pygame.draw.rect(window, (255, 0, 0), nextButton)
+    pygame.draw.rect(window, RED, smallLoadButton)
+    pygame.draw.rect(window, RED, prevButton)
+    pygame.draw.rect(window, RED, nextButton)
 
     window.blit(smallLoadText, (20 + 21, 20 + 13))
     window.blit(prevText, (DISPLAY_W/2-210 + 21, 40 + 12))
@@ -149,6 +154,7 @@ def main():
     exerciseIndex = 0
     inputText = ""
     inputBoxActive = False
+    answerSubmitted = False
 
     draw_window()
     while running:
@@ -166,12 +172,14 @@ def main():
                     matrixList = loadData(filePath)
                     draw_matrix_window(matrixList[0])
                     inputText = ""
+                    answerSubmitted = False
 
                 elif nextButton.collidepoint(mouse_pos):
                     try:
                         exerciseIndex += 1
                         draw_matrix_window(matrixList[exerciseIndex])
                         inputText = ""
+                        answerSubmitted = False
                     except IndexError:
                         exerciseIndex -= 1
                         #print("No matrix to read!")
@@ -181,13 +189,20 @@ def main():
                         exerciseIndex -= 1
                         draw_matrix_window(matrixList[exerciseIndex])
                         inputText = ""
+                        answerSubmitted = False
                     except IndexError:
                         exerciseIndex += 1
                         #print("No matrix to read!")
 
-                elif answerInputTextBox.collidepoint(mouse_pos):
+                elif answerInputTextBox.collidepoint(mouse_pos) and not answerSubmitted:
                     pygame.draw.rect(window, TEXTBOX_ACTIVE, answerInputTextBox)
                     inputBoxActive = True
+
+                elif submitButton.collidepoint(mouse_pos):
+                    pygame.draw.rect(window, WHITE, answerInputTextBox)
+                    drawAnswerText(inputText)
+                    inputBoxActive = False
+                    answerSubmitted = True
 
             # if key pressed and input box has been clicked
             elif event.type == pygame.KEYDOWN and inputBoxActive:
@@ -195,6 +210,7 @@ def main():
                     pygame.draw.rect(window, WHITE, answerInputTextBox)
                     drawAnswerText(inputText)
                     inputBoxActive = False
+                    answerSubmitted = True
 
                 elif event.key == pygame.K_BACKSPACE:
                     inputText = inputText[:-1]
