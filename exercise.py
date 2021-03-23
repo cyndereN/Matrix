@@ -49,6 +49,7 @@ class Exercise:
     #     return self.question_set
 
     def generate_exercise(self,size):
+        self.question_set.clear()
         self.question_set_size = size
         for i in range(size):
             question_type = randint(ADDITION,INVERSE)
@@ -66,9 +67,9 @@ class Exercise:
             Matrix1, Matrix2 = self.generate_random_matrix(question_type)
 
         if question_type == ADDITION:
-            return self.__addition(Matrix1,Matrix2) 
+            return self.__addition(Matrix1,Matrix2)
         elif question_type == SUBTRACTION:
-            return self.__subtraction(Matrix1,Matrix2) 
+            return self.__subtraction(Matrix1,Matrix2)
         elif question_type == MULTIPLICATION:
             return self.__multiplication(Matrix1,Matrix2)
         elif question_type == INVERSE:
@@ -77,21 +78,21 @@ class Exercise:
             return self.__determinant(Matrix1)
 
     def generate_random_matrix(self,question_type):
-        Matrix1 = self.generate_twoD_lst(question_type) 
+        Matrix1 = self.generate_twoD_lst(question_type)
         Matrix2 = None
-        if (question_type == ADDITION or 
-                question_type == SUBTRACTION or 
+        if (question_type == ADDITION or
+                question_type == SUBTRACTION or
                 question_type == MULTIPLICATION):
             Matrix2 = self.generate_twoD_lst(question_type)
         while(question_type == INVERSE and self.calculator.determinant(Matrix1) == 0):
             Matrix1 = self.generate_twoD_lst(question_type)
         return Matrix1, Matrix2
-    
-    def __check_value_is_integer(self,Matrix1):
+
+    def __check_proper_answer_and_matrix(self,Matrix1):
         answer_in_tuple = self.calculator.eigenvalue(Matrix1)
         for answer in answer_in_tuple:
             if ((not (answer - 0.00001 <= round(answer) <= answer + 0.00001))
-                or isinstance(answer,complex)
+                or type(answer) == complex
                 or -0.00001 <= round(answer) <= 0.00001):
                 return False
         zero_counter = 0
@@ -106,10 +107,6 @@ class Exercise:
         return True
 
     def __create_matrix_for_eigen(self):
-        """
-        Lazy implement here, as I do not return the eigenvalue and eigenvector
-        back
-        """
         M = []
         eigenvectors_tuple = self.__find_orthogonal_matrix()
         while([0,0,0] in eigenvectors_tuple):
@@ -156,29 +153,53 @@ class Exercise:
         if (question_type == ADDITION or question_type == SUBTRACTION):
             max_range = 20
         return [
-                ([(randint(0,max_range) if (randint(1,4) % 4 != 0) else randint(-max_range,0)) 
-                for k in range (0,3)]) 
+                ([(randint(0,max_range) if (randint(1,4) % 4 != 0) else randint(-max_range,0))
+                for k in range (0,3)])
                 for i in range (0,3)
                     ]
 
     def __round_matrix(self,Matrix1):
-        for i in range(0,len(Matrix1)):
-            for j in range(0,len(Matrix1[i])):
-                Matrix1[i][j] = round(Matrix1[i][j])
+        if self.__check_elements_are_integer(Matrix1):
+            for i in range(0,len(Matrix1)):
+                if type(Matrix1[i]) == float:
+                    Matrix1[i] = round(Matrix1[i])
+                else:
+                    for j in range(0,len(Matrix1[i])):
+                        Matrix1[i][j] = round(Matrix1[i][j])
+        else:
+            return Matrix1
+
+    def __check_elements_are_integer(self,Matrix1):
+        for rows in Matrix1:
+            if type(rows) == float:
+                if not (rows - 0.00001 <= round(rows) <= rows + 0.00001):
+                    return False
+            else:
+                for number in rows:
+                    if not (number - 0.00001 <= round(number) <= number + 0.00001):
+                        return False
+        return True
 
     def import_exercise(self,filename):
+        self.question_set.clear()
         f = open(filename, "r")
         self.exercise_set_size = int(f.readline())
-        loop = 1
+        print(self.exercise_set_size)
         for i in range(0,self.exercise_set_size):
             question_type_from_file = int(f.readline())
             matrix1_from_file = self.to_matrix(f.readline(),f.readline())
+            matrix2_from_file = None
             if  (question_type_from_file == ADDITION or
                 question_type_from_file == SUBTRACTION or
                 question_type_from_file == MULTIPLICATION):
                 matrix2_from_file = self.to_matrix(f.readline(),f.readline())
-            self.generate_question(question_type_from_file,matrix1_from_file,matrix2_from_file)
-    
+            else:
+                matrix2_from_file = None
+            self.question_set.append(
+                self.generate_question(question_type_from_file,matrix1_from_file,matrix2_from_file))
+        f.close()
+        return self.question_set
+
     def to_matrix(self,str_shape,str_matrix):
         shape = str_shape.split(" ")
         row = int(shape[0])
@@ -187,16 +208,18 @@ class Exercise:
         matrix = [[] for i in range (0,col)]
         for m in range(col):
             for n in range(row):
-                matrix[m].append(int(element[n + m * row]))
+                matrix[m].append(float(element[n + m * row]))
         return matrix
 
     def __addition(self,Matrix1,Matrix2):
         answer = self.calculator.addition(Matrix1,Matrix2)
+        self.__round_matrix(answer)
         q = Question(ADDITION,Text[0],answer, Matrix1, Matrix2)
         return q
-    
+
     def __subtraction(self,Matrix1,Matrix2):
         answer = self.calculator.subtraction(Matrix1,Matrix2)
+        self.__round_matrix(answer)
         q = Question(SUBTRACTION,Text[0],answer, Matrix1, Matrix2)
         return q
 
@@ -208,38 +231,35 @@ class Exercise:
 
     def __eigenvector(self,Matrix1):
         answer = []
-        
+
         if Matrix1 == None:
             Matrix1, _ , answer = self.__create_matrix_for_eigen()
             self.__round_matrix(Matrix1)
-            while (not self.__check_value_is_integer(Matrix1)):
+            while (not self.__check_proper_answer_and_matrix(Matrix1)):
                 Matrix1, _ , answer= self.__create_matrix_for_eigen()
                 self.__round_matrix(Matrix1)
-        
+
         else:
             temp_answer = self.calculator.eigenvetor(Matrix1)
-            for vector in temp_answer:
-                answer.append(self.__round_matrix(vector))
-
+            answer.append(self.__round_matrix(temp_answer))
         q = Question(EIGENVECTOR,Text[1],answer, Matrix1)
-        return q  
-    
+        return q
+
     def __eigenvalue(self,Matrix1):
         answer = []
 
         if Matrix1 == None:
             Matrix1, answer, _ = self.__create_matrix_for_eigen()
             self.__round_matrix(Matrix1)
-            while (not self.__check_value_is_integer(Matrix1)):
+            while (not self.__check_proper_answer_and_matrix(Matrix1)):
                 Matrix1, answer, _ = self.__create_matrix_for_eigen()
                 self.__round_matrix(Matrix1)
         else:
             temp_answer = self.calculator.eigenvalue(Matrix1)
-            for num in temp_answer:
-                answer.append(round(num))
+            answer.append(self.__round_matrix(temp_answer))
 
         q = Question(EIGENVALUE,Text[2],answer, Matrix1)
-        return q  
+        return q
 
     def __inverse(self,Matrix1):
         answer = []
@@ -249,7 +269,7 @@ class Exercise:
         self.__round_matrix(answer[1])
         q = Question(INVERSE,Text[3],answer,Matrix1)
         return q
-    
+
     def __determinant(self,Matrix1):
         answer = self.calculator.determinant(Matrix1)
         answer = round(answer)
@@ -258,10 +278,19 @@ class Exercise:
 
 if __name__ == "__main__":
     e = Exercise()
-    e.generate_exercise(10)
-    q = e.get_exercise()
-    for x in q:
-        print(x.get_text())
-        print(x.get_question_type())
-        print(x.get_matrices())
-        print(x.get_answer())
+    q1 = e.generate_exercise(5)
+    q2 = e.import_exercise("test.txt")
+    print("==================== Random ======================")
+    for x in q1:
+        print("Text:        " + str(x.get_text()))
+        print("Type:        " + str(x.get_question_type()))
+        print("Matrices:    " + str(x.get_matrices()))
+        print("Answer:      " + str(x.get_answer()))
+        print("-----------------------------------------\n")
+    print("==================== From File ======================")
+    for x in q2:
+        print("Text:        " + str(x.get_text()))
+        print("Type:        " + str(x.get_question_type()))
+        print("Matrices:    " + str(x.get_matrices()))
+        print("Answer:      " + str(x.get_answer()))
+        print("-----------------------------------------\n")
