@@ -14,9 +14,14 @@ window = pygame.display.set_mode((DISPLAY_W, DISPLAY_H))
 clock = pygame.time.Clock()
 filePath = ""
 matrixList = []
-button = pygame.Rect(100,100,100,50)
+loadButton = pygame.Rect(100, 100, 100, 50)
+smallLoadButton = pygame.Rect(50, 50, 100, 50)
+prevButton = pygame.Rect(DISPLAY_W/2-290, 100, 120, 50)
+nextButton = pygame.Rect(DISPLAY_W/2+120, 100, 100, 50)
 customFont = pygame.font.SysFont('comicsans', 35)
-text = customFont.render("Load", True, WHITE)
+loadText = customFont.render("Load", True, WHITE)
+prevText = customFont.render("Previous", True, WHITE)
+nextText = customFont.render("Next", True, WHITE)
 
 grid = []
 for row in range(3):
@@ -37,13 +42,6 @@ def prompt_file():
 def loadData(filePath):
     exercise = Exercise()
     questionList = exercise.import_exercise(filePath)
-    print("==================== From File ======================")
-    for x in questionList:
-        print("Text:        " + str(x.get_text()))
-        print("Type:        " + str(x.get_question_type()))
-        print("Matrices:    " + str(x.get_matrices()))
-        print("Answer:      " + str(x.get_answer()))
-        print("-----------------------------------------\n")
     return questionList
 
 
@@ -66,14 +64,14 @@ def drawMatrix(matrix1, matrix2=None):
         rows2, cols2 = getMatrixDimensions(matrix2)
         for row in range(rows1):
             for col in range(cols1):
-                gridX = (MARGIN+GRIDBOX_W)*col+MARGIN+DISPLAY_W/4
+                gridX = (MARGIN+GRIDBOX_W)*col+MARGIN+DISPLAY_W/4-50
                 gridY = (MARGIN+GRIDBOX_H)*row+MARGIN+200
                 pygame.draw.rect(window, WHITE, [gridX, gridY,GRIDBOX_W,GRIDBOX_H])
                 text = numFont.render(str(matrix1[row][col]), True, BLACK)
                 window.blit(text, (gridX+(GRIDBOX_W/2 - text.get_width()/2), gridY+(GRIDBOX_H/2 - text.get_height()/2)))
         for row in range(rows2):
             for col in range(cols2):
-                gridX = (MARGIN+GRIDBOX_W)*col+MARGIN+DISPLAY_W/2+100
+                gridX = (MARGIN+GRIDBOX_W)*col+MARGIN+3*DISPLAY_W/4-120
                 gridY = (MARGIN+GRIDBOX_H)*row+MARGIN+200
                 pygame.draw.rect(window, WHITE, [gridX, gridY,GRIDBOX_W,GRIDBOX_H])
                 text = numFont.render(str(matrix1[row][col]), True, BLACK)
@@ -83,21 +81,31 @@ def drawMatrix(matrix1, matrix2=None):
 def draw_window():
     # draw surface - fill background
     window.fill(pygame.color.Color("grey"))
-    pygame.draw.rect(window, (255, 0, 0), button)
-    window.blit(text, (100+23,100+15))
+    pygame.draw.rect(window, (255, 0, 0), loadButton)
+    window.blit(loadText, (100 + 23, 100 + 15))
 
-    for x in matrixList:
-        drawMatrix(x.get_matrices()[0], x.get_matrices()[1])
-    ## update title to show filename
-    pygame.display.set_caption("Load file")
+    pygame.display.set_caption("Import matrix file")
     # show surface
     pygame.display.update()
 
+def draw_matrix_window(matrix):
+    window.fill(pygame.color.Color("grey"))
+    pygame.draw.rect(window, (255, 0, 0), smallLoadButton)
+    pygame.draw.rect(window, (255, 0, 0), prevButton)
+    pygame.draw.rect(window, (255, 0, 0), nextButton)
+    window.blit(loadText, (50 + 23, 50 + 15))
+    window.blit(prevText, (DISPLAY_W/2-300 + 20, 100 + 15))
+    window.blit(nextText, (DISPLAY_W/2+120 + 23, 100 + 15))
+    drawMatrix(matrix.get_matrices()[0], matrix.get_matrices()[1])
+    pygame.display.set_caption("Import matrix file")
+    pygame.display.flip()
+
 def main():
-    frames = 0
     running = True
     global matrixList
+    exerciseIndex = 0
 
+    draw_window()
     while running:
         events = pygame.event.get()
         for event in events:
@@ -108,14 +116,29 @@ def main():
                 mouse_pos = event.pos       # gets mouse position
 
                 # checks if mouse position is over button
-                if button.collidepoint(mouse_pos):
+                if loadButton.collidepoint(mouse_pos) or smallLoadButton.collidepoint(mouse_pos):
                     prompt_file()
                     matrixList = loadData(filePath)
+                    draw_matrix_window(matrixList[0])
+                if nextButton.collidepoint(mouse_pos):
+                    try:
+                        exerciseIndex += 1
+                        draw_matrix_window(matrixList[exerciseIndex])
+                    except IndexError:
+                        exerciseIndex -= 1
+                        #print("No matrix to read!")
+                if prevButton.collidepoint(mouse_pos) and exerciseIndex > 0:
+                    try:
+                        exerciseIndex -= 1
+                        draw_matrix_window(matrixList[exerciseIndex])
+                    except IndexError:
+                        exerciseIndex += 1
+                        #print("No matrix to read!")
 
-        draw_window()
+
+        pygame.display.update()
         # limit frames
         clock.tick(FPS)
-        frames += 1
     pygame.quit()
 
 if __name__ == "__main__":

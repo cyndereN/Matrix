@@ -184,7 +184,7 @@ class Exercise:
         self.question_set.clear()
         f = open(filename, "r")
         self.exercise_set_size = int(f.readline())
-        print(self.exercise_set_size)
+        #print(self.exercise_set_size)
         for i in range(0,self.exercise_set_size):
             question_type_from_file = int(f.readline())
             matrix1_from_file = self.to_matrix(f.readline(),f.readline())
