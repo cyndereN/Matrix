@@ -5,7 +5,6 @@ import numpy
 import ast
 from functools import reduce
 from operator import add
-from pygame._freetype import *
 from exercise import Exercise
 from settings import *
 
@@ -74,10 +73,7 @@ def submitAnswer(inputText, matrix):
     print(lst)
     print(answer)
     print(rounded)
-    if lst == rounded:
-        return True
-    else:
-        return rounded
+    return lst==rounded, rounded
 
 
 # display question text on screen
@@ -138,6 +134,20 @@ def drawMatrixAnswer(matrix):
 def drawAnswerText(inputText):
     displayText = answerFont.render(inputText, True, BLACK)
     window.blit(displayText, (355, 450))
+    pygame.display.update()
+
+
+def drawResult(result, answer):
+    text = ""
+    if result:
+        text = "Your answer is correct!"
+        displayText = answerFont.render(text, True, BLACK)
+        window.blit(displayText, (355, 490))
+    else:
+        text = "Wrong. The correct answer is: " + str(answer)
+        displayText = answerFont.render(text, True, BLACK)
+        window.blit(displayText, (300, 490))
+
     pygame.display.update()
 
 # draw start screen
@@ -219,19 +229,23 @@ def main():
 
                 elif submitButton.collidepoint(mouse_pos):
                     pygame.draw.rect(window, WHITE, answerInputTextBox)
+                    if inputText == "": break
                     drawAnswerText(inputText)
-                    submitAnswer(inputText, matrixList[exerciseIndex])
+                    result, answer = submitAnswer(inputText, matrixList[exerciseIndex])
                     inputBoxActive = False
                     answerSubmitted = True
+                    drawResult(result, answer)
 
             # if key pressed and input box has been clicked
             elif event.type == pygame.KEYDOWN and inputBoxActive:
                 if event.key == pygame.K_RETURN:
                     pygame.draw.rect(window, WHITE, answerInputTextBox)
+                    if inputText == "": break
                     drawAnswerText(inputText)
-                    submitAnswer(inputText, matrixList[exerciseIndex])
+                    result, answer = submitAnswer(inputText, matrixList[exerciseIndex])
                     inputBoxActive = False
                     answerSubmitted = True
+                    drawResult(result, answer)
 
                 elif event.key == pygame.K_BACKSPACE:
                     inputText = inputText[:-1]
