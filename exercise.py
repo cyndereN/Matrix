@@ -11,7 +11,9 @@ EIGENVALUE = 4
 INVERSE = 5
 DETERMINANT = 6
 Text = [
-    "Find the result of this calculation",
+    ["Find the sum of this calculation",
+     "Find the difference of this calculation",
+     "Find the product of this calculation",],
     "Find the eigenvector of this matrix",
     "Find the eigenvalue of this matrix",
     "Find the inverse of this matrix",
@@ -52,7 +54,7 @@ class Exercise:
         self.question_set.clear()
         self.question_set_size = size
         for i in range(size):
-            question_type = randint(ADDITION,INVERSE)
+            question_type = randint(ADDITION,DETERMINANT)
             self.question_set.append(self.generate_question(question_type))
         return self.question_set
 
@@ -182,22 +184,25 @@ class Exercise:
 
     def import_exercise(self,filename):
         self.question_set.clear()
-        f = open(filename, "r")
-        self.exercise_set_size = int(f.readline())
-        #print(self.exercise_set_size)
-        for i in range(0,self.exercise_set_size):
-            question_type_from_file = int(f.readline())
-            matrix1_from_file = self.to_matrix(f.readline(),f.readline())
-            matrix2_from_file = None
-            if  (question_type_from_file == ADDITION or
-                question_type_from_file == SUBTRACTION or
-                question_type_from_file == MULTIPLICATION):
-                matrix2_from_file = self.to_matrix(f.readline(),f.readline())
-            else:
-                matrix2_from_file = None
-            self.question_set.append(
-                self.generate_question(question_type_from_file,matrix1_from_file,matrix2_from_file))
-        f.close()
+        try:
+            with open(filename, "r") as f:
+                try:
+                    self.exercise_set_size = int(f.readline())
+                    #print(self.exercise_set_size)
+                    for i in range(0,self.exercise_set_size):
+                        question_type_from_file = int(f.readline())
+                        matrix1_from_file = self.to_matrix(f.readline(),f.readline())
+                        matrix2_from_file = None
+                        if  (question_type_from_file == ADDITION or
+                            question_type_from_file == SUBTRACTION or
+                            question_type_from_file == MULTIPLICATION):
+                            matrix2_from_file = self.to_matrix(f.readline(),f.readline())
+                        self.question_set.append(
+                            self.generate_question(question_type_from_file,matrix1_from_file,matrix2_from_file))
+                except ValueError:
+                    print("Wrong formatting with file!")
+        except FileNotFoundError as error:
+            print(error)
         return self.question_set
 
     def to_matrix(self,str_shape,str_matrix):
@@ -214,19 +219,19 @@ class Exercise:
     def __addition(self,Matrix1,Matrix2):
         answer = self.calculator.addition(Matrix1,Matrix2)
         self.__round_matrix(answer)
-        q = Question(ADDITION,Text[0],answer, Matrix1, Matrix2)
+        q = Question(ADDITION,Text[0][0],answer, Matrix1, Matrix2)
         return q
 
     def __subtraction(self,Matrix1,Matrix2):
         answer = self.calculator.subtraction(Matrix1,Matrix2)
         self.__round_matrix(answer)
-        q = Question(SUBTRACTION,Text[0],answer, Matrix1, Matrix2)
+        q = Question(SUBTRACTION,Text[0][1],answer, Matrix1, Matrix2)
         return q
 
     def __multiplication(self,Matrix1,Matrix2):
         answer = self.calculator.multiplication(Matrix1,Matrix2)
         self.__round_matrix(answer)
-        q = Question(MULTIPLICATION,Text[0],answer, Matrix1, Matrix2)
+        q = Question(MULTIPLICATION,Text[0][2],answer, Matrix1, Matrix2)
         return q
 
     def __eigenvector(self,Matrix1):
@@ -262,11 +267,8 @@ class Exercise:
         return q
 
     def __inverse(self,Matrix1):
-        answer = []
-        answer_temp = self.calculator.inverse(Matrix1)
-        answer.append(round(answer_temp[0]))
-        answer.append(answer_temp[1])
-        self.__round_matrix(answer[1])
+        answer = self.calculator.inverse(Matrix1)
+        self.__round_matrix(answer)
         q = Question(INVERSE,Text[3],answer,Matrix1)
         return q
 
