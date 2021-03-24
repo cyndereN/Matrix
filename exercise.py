@@ -14,8 +14,8 @@ Text = [
     ["Find the sum of this calculation",
      "Find the difference of this calculation",
      "Find the product of this calculation",],
-    "Find the eigenvector of this matrix",
-    "Find the eigenvalue of this matrix",
+    "Find the eigenvectors of this matrix",
+    "Find the eigenvalues of this matrix",
     "Find the inverse of this matrix",
     "Find the determinant of this matrix"
     ]

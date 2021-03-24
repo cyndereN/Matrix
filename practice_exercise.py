@@ -4,8 +4,6 @@ import tkinter.filedialog
 import pygame
 import numpy
 import ast
-from functools import reduce
-from operator import add
 from exercise import Exercise
 from settings import *
 
@@ -97,7 +95,7 @@ class PracticeExercise:
         else:
             rounded = self.roundTo2Decimals(answer)
         if matrix.get_question_type() == 3 or matrix.get_question_type() == 4:
-            temp_answer = answer.copy()
+            temp_answer = rounded.copy()
             for item in submit_answer:
                 if item not in temp_answer:
                     return False, rounded
@@ -253,7 +251,6 @@ class PracticeExercise:
             events = pygame.event.get()
             for event in events:
                 if event.type == pygame.QUIT:
-                    running = False
                     pygame.quit()
                     sys.exit()
 
