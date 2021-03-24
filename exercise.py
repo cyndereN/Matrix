@@ -246,7 +246,7 @@ class Exercise:
 
         else:
             temp_answer = self.calculator.eigenvetor(Matrix1)
-            answer.append(self.__round_matrix(temp_answer))
+            answer = (self.__round_matrix(temp_answer))
         q = Question(EIGENVECTOR,Text[1],answer, Matrix1)
         return q
 
@@ -261,7 +261,7 @@ class Exercise:
                 self.__round_matrix(Matrix1)
         else:
             temp_answer = self.calculator.eigenvalue(Matrix1)
-            answer.append(self.__round_matrix(temp_answer))
+            answer = (self.__round_matrix(temp_answer))
 
         q = Question(EIGENVALUE,Text[2],answer, Matrix1)
         return q
@@ -280,7 +280,6 @@ class Exercise:
 
 if __name__ == "__main__":
     q1 = Exercise().generate_exercise(5)
-    q2 = Exercise().import_exercise("test.txt")
     print("==================== Random ======================")
     for x in q1:
         print("Text:        " + str(x.get_text()))
@@ -289,6 +288,7 @@ if __name__ == "__main__":
         print("Answer:      " + str(x.get_answer()))
         print("-----------------------------------------\n")
     print("==================== From File ======================")
+    q2 = Exercise().import_exercise("test.txt")
     for x in q2:
         print("Text:        " + str(x.get_text()))
         print("Type:        " + str(x.get_question_type()))

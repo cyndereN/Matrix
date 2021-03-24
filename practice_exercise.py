@@ -81,17 +81,26 @@ class PracticeExercise:
     # check if submitted answer matches correct answer
     def submitAnswer(self, inputText, matrix):
         lst = ast.literal_eval(inputText)
-        if matrix.get_question_type() == 3 or matrix.get_question_type() == 4:
-            answer = reduce(add, matrix.get_answer())
-        else:
-            answer = matrix.get_answer()
+
+        # return boolean and correct answer
+        return self.checkSubmitAnswer(lst, matrix)
+
+    def checkSubmitAnswer(self, submit_answer, matrix):
+        answer = matrix.get_answer()
         if matrix.get_question_type() == 6:
             rounded = answer
         else:
             rounded = self.roundTo2Decimals(answer)
-
-        # return boolean and correct answer
-        return lst == rounded, rounded
+        if matrix.get_question_type() == 3 or matrix.get_question_type() == 4:
+            temp_answer = answer.copy()
+            for item in submit_answer:
+                if item not in temp_answer:
+                    return False, rounded
+                else:
+                    temp_answer.remove(item)
+            return True, rounded
+        else:
+            return submit_answer == answer, rounded
 
 
     # display question text on screen
