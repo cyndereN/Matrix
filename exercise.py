@@ -184,20 +184,25 @@ class Exercise:
 
     def import_exercise(self,filename):
         self.question_set.clear()
-        f = open(filename, "r")
-        self.exercise_set_size = int(f.readline())
-        #print(self.exercise_set_size)
-        for i in range(0,self.exercise_set_size):
-            question_type_from_file = int(f.readline())
-            matrix1_from_file = self.to_matrix(f.readline(),f.readline())
-            matrix2_from_file = None
-            if  (question_type_from_file == ADDITION or
-                question_type_from_file == SUBTRACTION or
-                question_type_from_file == MULTIPLICATION):
-                matrix2_from_file = self.to_matrix(f.readline(),f.readline())
-            self.question_set.append(
-                self.generate_question(question_type_from_file,matrix1_from_file,matrix2_from_file))
-        f.close()
+        try:
+            with open(filename, "r") as f:
+                try:
+                    self.exercise_set_size = int(f.readline())
+                    #print(self.exercise_set_size)
+                    for i in range(0,self.exercise_set_size):
+                        question_type_from_file = int(f.readline())
+                        matrix1_from_file = self.to_matrix(f.readline(),f.readline())
+                        matrix2_from_file = None
+                        if  (question_type_from_file == ADDITION or
+                            question_type_from_file == SUBTRACTION or
+                            question_type_from_file == MULTIPLICATION):
+                            matrix2_from_file = self.to_matrix(f.readline(),f.readline())
+                        self.question_set.append(
+                            self.generate_question(question_type_from_file,matrix1_from_file,matrix2_from_file))
+                except ValueError:
+                    print("Wrong formatting with file!")
+        except FileNotFoundError as error:
+            print(error)
         return self.question_set
 
     def to_matrix(self,str_shape,str_matrix):

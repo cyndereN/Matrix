@@ -243,12 +243,16 @@ class PracticeExercise:
                     # checks if mouse position is over buttons
 
                     if loadButton.collidepoint(mouse_pos) or smallLoadButton.collidepoint(mouse_pos):
-                        self.prompt_file()
-                        self.matrixList = self.loadData()
-                        self.draw_matrix_window(self.matrixList[0])
-                        exerciseIndex = 0
-                        inputText = ""
-                        answerSubmitted = False
+                        try:
+                            self.prompt_file()
+                            self.matrixList = self.loadData()
+                            self.draw_matrix_window(self.matrixList[0])
+                        except IndexError:
+                            pass
+                        finally:
+                            exerciseIndex = 0
+                            inputText = ""
+                            answerSubmitted = False
 
                     elif generateButton.collidepoint(mouse_pos):
                         self.matrixList = self.generateData()
