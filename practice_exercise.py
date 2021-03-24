@@ -22,18 +22,19 @@ matrixList = []
 score = 0
 
 # init buttons and textbox
-loadButton = pygame.Rect(DISPLAY_W/2-50, DISPLAY_H/2-100, 100, 50)
-generateButton = pygame.Rect(DISPLAY_W/2-70, DISPLAY_H/2+100, 140, 50)
+loadButton = pygame.Rect(DISPLAY_W/2-70, DISPLAY_H/2-100, 140, 50)
+generateButton = pygame.Rect(DISPLAY_W/2-130, DISPLAY_H/2+100, 260, 50)
 smallLoadButton = pygame.Rect(20, 20, 80, 40)
-prevButton = pygame.Rect(DISPLAY_W/2-210, 40, 120, 40)
-nextButton = pygame.Rect(DISPLAY_W/2+50, 40, 120, 40)
-answerInputTextBox = pygame.Rect(350, 445, 400, 30)
+prevButton = pygame.Rect(DISPLAY_W/2-220, 40, 150, 40)
+nextButton = pygame.Rect(DISPLAY_W/2+60, 40, 140, 40)
+answerInputTextBox = pygame.Rect(330, 442, 390, 30)
 submitButton = pygame.Rect(DISPLAY_W/2-60, 520, 120, 40)
-endButton = pygame.Rect(DISPLAY_W-140, 80, 120, 40)
+endButton = pygame.Rect(DISPLAY_W-160, 80, 150, 40)
 
 # init fonts
-customFont = pygame.font.SysFont('comicsans', 35)
-smallFont = pygame.font.SysFont('comicsans', 25)
+customFont = pygame.font.Font(FONT_1, 30)
+smallFont = pygame.font.Font(FONT_2, 17)
+defaultFont = pygame.font.SysFont('comicsans', 25)
 answerFont = pygame.font.SysFont('Calibri', 17)
 
 # init text with corresponding fonts
@@ -42,7 +43,7 @@ generateText = customFont.render("Generate", True, WHITE)
 smallLoadText = smallFont.render("Load", True, WHITE)
 prevText = smallFont.render("Previous", True, WHITE)
 nextText = smallFont.render("Next", True, WHITE)
-answerText = smallFont.render("Answer: ", True, BLACK)
+answerText = defaultFont.render("Answer: ", True, BLACK)
 submitText = smallFont.render("Submit", True, WHITE)
 endText = smallFont.render("End Game", True, WHITE)
 
@@ -58,13 +59,11 @@ def prompt_file():
 
 
 def loadData(filePath):
-    e = Exercise()
-    return e.import_exercise(filePath)
+    return Exercise().import_exercise(filePath)
 
 
 def generateData():
-    e = Exercise()
-    return e.generate_exercise(5)
+    return Exercise().generate_exercise(5)
 
 
 # helper function to get rows x cols of matrix
@@ -91,7 +90,7 @@ def submitAnswer(inputText, matrix):
 def drawMatrixQuestion(matrix):
     numFont = pygame.font.SysFont('Arial', 15)
     questionText = matrix.get_text()
-    pygame.draw.rect(window, WHITE, (DISPLAY_W/2-120, 110, 210, 40))
+    pygame.draw.rect(window, WHITE, (DISPLAY_W/2-120, 110, 220, 40))
     text = numFont.render(questionText, True, BLACK)
     window.blit(text, (DISPLAY_W/2-110, 120))
 
@@ -138,16 +137,16 @@ def drawMatrix(matrix):
 def drawMatrixAnswer(matrix):
     matrixType = matrix.get_question_type()
     if matrixType <= 3: pass
-    window.blit(answerText, (250, 450))
+    window.blit(answerText, (230, 450))
     pygame.draw.rect(window, WHITE, answerInputTextBox)
     pygame.draw.rect(window, RED, submitButton)
-    window.blit(submitText, (DISPLAY_W/2-35, 530))
+    window.blit(submitText, (DISPLAY_W/2-48, 530))
 
 
 # display answer textfield
 def drawAnswerText(inputText):
     displayText = answerFont.render(inputText, True, BLACK)
-    window.blit(displayText, (355, 450))
+    window.blit(displayText, (335, 450))
     pygame.display.update()
 
 
@@ -172,8 +171,8 @@ def draw_window():
     window.fill(pygame.color.Color("grey"))
     pygame.draw.rect(window, RED, loadButton)
     pygame.draw.rect(window, RED, generateButton)
-    window.blit(loadText, (DISPLAY_W/2-50 + 23, DISPLAY_H/2-100 + 15))
-    window.blit(generateText, (DISPLAY_W/2-70 + 17, DISPLAY_H/2+100 + 15))
+    window.blit(loadText, (DISPLAY_W/2-70 + 17, DISPLAY_H/2-100 + 10))
+    window.blit(generateText, (DISPLAY_W/2-130 + 12, DISPLAY_H/2+100 + 10))
     pygame.display.set_caption("Load Matrix From File")
     pygame.display.update()
 
@@ -186,12 +185,12 @@ def draw_matrix_window(matrix):
     pygame.draw.rect(window, RED, nextButton)
     pygame.draw.rect(window, RED, endButton)
 
-    scoreText = smallFont.render("Score: " + str(score), True, BLACK)
-    window.blit(smallLoadText, (20 + 21, 20 + 13))
-    window.blit(prevText, (DISPLAY_W/2-210 + 21, 40 + 12))
-    window.blit(nextText, (DISPLAY_W/2+50 + 40, 40 + 12))
-    window.blit(scoreText, (DISPLAY_W-100, 50))
-    window.blit(endText, (DISPLAY_W-120, 90))
+    scoreText = answerFont.render("Score: " + str(score), True, BLACK)
+    window.blit(smallLoadText, (20 + 8, 20 + 10))
+    window.blit(prevText, (DISPLAY_W/2-220 + 8, 40 + 10))
+    window.blit(nextText, (DISPLAY_W/2+60 + 40, 40 + 10))
+    window.blit(scoreText, (DISPLAY_W-130, 50))
+    window.blit(endText, (DISPLAY_W-150, 90))
 
     drawMatrixQuestion(matrix)
     drawMatrix(matrix)
@@ -202,9 +201,9 @@ def draw_matrix_window(matrix):
 
 def drawEndScreen():
     window.fill(pygame.color.Color("grey"))
-    scoreText = smallFont.render("Score: " + str(score), True, BLACK)
+    scoreText = defaultFont.render("Score: " + str(score), True, BLACK)
     window.blit(scoreText, (DISPLAY_W/2-50, DISPLAY_H/2-100))
-    correctText = smallFont.render("Number of correct questions: " + str(score//500), True, BLACK)
+    correctText = defaultFont.render("Number of correct questions: " + str(score//500), True, BLACK)
     window.blit(correctText, (DISPLAY_W/2-140, DISPLAY_H/2+100))
     pygame.display.set_caption("Summary Page")
     pygame.display.flip()
