@@ -1,3 +1,4 @@
+import sys
 import tkinter
 import tkinter.filedialog
 import pygame
@@ -21,11 +22,13 @@ pygame.init()
 loadButton = pygame.Rect(DISPLAY_W/2-70, DISPLAY_H/2-100, 140, 50)
 generateButton = pygame.Rect(DISPLAY_W/2-130, DISPLAY_H/2+100, 260, 50)
 smallLoadButton = pygame.Rect(20, 20, 80, 40)
+smallGenerateButton = pygame.Rect(20, 70, 150, 40)
 prevButton = pygame.Rect(DISPLAY_W/2-220, 40, 150, 40)
 nextButton = pygame.Rect(DISPLAY_W/2+60, 40, 140, 40)
 answerInputTextBox = pygame.Rect(330, 442, 390, 30)
 submitButton = pygame.Rect(DISPLAY_W/2-60, 520, 120, 40)
 endButton = pygame.Rect(DISPLAY_W-160, 80, 150, 40)
+mainMenuButton = pygame.Rect(DISPLAY_W/2-100, DISPLAY_H/2+200, 200, 50)
 
 # init fonts
 customFont = pygame.font.Font(FONT_1, 30)
@@ -37,11 +40,13 @@ answerFont = pygame.font.SysFont('Calibri', 17)
 loadText = customFont.render("Load", True, WHITE)
 generateText = customFont.render("Generate", True, WHITE)
 smallLoadText = smallFont.render("Load", True, WHITE)
+smallGenerateText = smallFont.render("Generate", True, WHITE)
 prevText = smallFont.render("Previous", True, WHITE)
 nextText = smallFont.render("Next", True, WHITE)
 answerText = defaultFont.render("Answer: ", True, BLACK)
 submitText = smallFont.render("Submit", True, WHITE)
 endText = smallFont.render("End Game", True, WHITE)
+mainMenuText = smallFont.render("Main Menu", True, WHITE)
 
 
 class PracticeExercise:
@@ -193,12 +198,14 @@ class PracticeExercise:
     def draw_matrix_window(self, matrix):
         self.window.fill(pygame.color.Color("grey"))
         pygame.draw.rect(self.window, RED, smallLoadButton)
+        pygame.draw.rect(self.window, RED, smallGenerateButton)
         pygame.draw.rect(self.window, RED, prevButton)
         pygame.draw.rect(self.window, RED, nextButton)
         pygame.draw.rect(self.window, RED, endButton)
 
         scoreText = answerFont.render("Score: " + str(self.score), True, BLACK)
         self.window.blit(smallLoadText, (20 + 8, 20 + 10))
+        self.window.blit(smallGenerateText, (20 + 8, 70 + 10))
         self.window.blit(prevText, (DISPLAY_W/2-220 + 8, 40 + 10))
         self.window.blit(nextText, (DISPLAY_W/2+60 + 40, 40 + 10))
         self.window.blit(scoreText, (DISPLAY_W-130, 50))
@@ -217,6 +224,8 @@ class PracticeExercise:
         self.window.blit(scoreText, (DISPLAY_W/2-50, DISPLAY_H/2-100))
         correctText = defaultFont.render("Number of correct questions: " + str(self.score//500), True, BLACK)
         self.window.blit(correctText, (DISPLAY_W/2-140, DISPLAY_H/2+100))
+        pygame.draw.rect(self.window, RED, mainMenuButton)
+        self.window.blit(mainMenuText, (DISPLAY_W/2-100+22, DISPLAY_H/2+200+15))
 
         pygame.display.set_caption("Summary Page")
         pygame.display.flip()
@@ -236,6 +245,8 @@ class PracticeExercise:
             for event in events:
                 if event.type == pygame.QUIT:
                     running = False
+                    pygame.quit()
+                    sys.exit()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = event.pos       # get mouse position
@@ -294,6 +305,9 @@ class PracticeExercise:
 
                     elif endButton.collidepoint(mouse_pos):
                         self.drawEndScreen()
+
+                    elif mainMenuButton.collidepoint(mouse_pos):
+                        self.draw_window()
 
                 # if key pressed and input box has been clicked
                 elif event.type == pygame.KEYDOWN and inputBoxActive:
