@@ -1,6 +1,8 @@
 import pygame, sys, random
 from settings import *
 from menu import *
+from practice_exercise import *
+from create_exercise_GUI import *
 
 class Game():
     def __init__(self):
@@ -65,14 +67,23 @@ class Game():
         self.display.blit(text_surface, text_rect)
 
     def start_exercise(self):
-        self.playing = True
-        pass
+        waiting = True
+        while waiting:
+            p = PracticeExercise()
+            p.main()
+            self.check_events()
+            if self.BACK_KEY:
+                waiting = False
+            self.reset_keys()
+        
 
     def import_exercise(self):
         pass
 
     def create_exercise(self):
-        pass
+        matrix_editor = MatrixEditor()
+        matrix_editor.main()
+
 
     def rankings():
         pass

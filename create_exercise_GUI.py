@@ -1,21 +1,8 @@
 # create_exercise GUI
 
-import pygame
-from settings import FONT_1, FONT_2
+import pygame, sys
+from settings import *
 from create_exercise import Create_Exercise
-
-WINDOW_WIDTH, WINDOW_HEIGHT = 960, 580
-WINDOW_TITLE = "Matrix Exercise Application"
-WINDOW_BACKGROUND_COLOR = (0, 0, 0)  # black
-TITLE_TEXT_COLOR = (255, 255, 255)  # white
-INPUT_TEXTBOX_COLOR_INACTIVE = (255, 255, 255)  # white
-INPUT_TEXTBOX_COLOR_ACTIVE = (137, 209, 254)  # light blue
-INPUT_TEXT_COLOR = (0, 0, 0)  # black
-QUESTION_BUTTON_COLOR = (34, 34, 34)  # dark grey
-BUTTON_COLOR = (255, 255, 255)  # white
-BUTTON_PRESSED_COLOR = (137, 209, 254)  # light blue
-RECT_BORDER_COLOR = (255, 255, 255)  # white
-FPS = 60
 
 
 # this class handles drawing the objects on the window for COVER page & its functionality
@@ -675,7 +662,7 @@ class EditorPage:
                         # if user clicks on export button
                         if self.export_file_button.collidepoint(event.pos):
                             # export to text file
-                            self.creator.write_to_file(self.file_name)
+                            self.creator.write_to_file("worksheets/" + self.file_name + '.txt')
                             # quit to MatrixEditor()
                             self.running = False
 
@@ -696,6 +683,7 @@ class EditorPage:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         self.running = False
+                        sys.exit()
                         pygame.quit()
 
                     # clicking events #
@@ -1521,10 +1509,4 @@ class MatrixEditor:
             editor_page = EditorPage(self.window, file_name, no_of_q)
             editor_page.go()
 
-        # todo - connect to main menu
-        print("back to MatrixEditor main class")
 
-
-if __name__ == "__main__":
-    matrix_editor = MatrixEditor()
-    matrix_editor.main()

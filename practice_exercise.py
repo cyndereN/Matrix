@@ -6,12 +6,6 @@ import ast
 from exercise import Exercise
 from settings import *
 
-GRIDBOX_H, GRIDBOX_W = 50, 50
-MARGIN = 5
-RED = (255, 0, 0)
-TEXTBOX_ACTIVE = (137, 209, 254)
-TEXTBOX_MAX_LENGTH = 40
-
 pygame.init()
 
 
@@ -360,6 +354,4 @@ class PracticeExercise:
         pygame.quit()
 
 
-if __name__ == "__main__":
-    p = PracticeExercise()
-    p.main()
+
