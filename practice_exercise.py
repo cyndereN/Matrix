@@ -2,7 +2,6 @@ import sys
 import tkinter
 import tkinter.filedialog
 import pygame
-import numpy
 import ast
 from exercise import Exercise
 from settings import *
@@ -75,7 +74,7 @@ class PracticeExercise:
 
     # helper function to get rows x cols of matrix
     def getMatrixDimensions(self, matrix):
-        return numpy.array(matrix).shape
+        return len(matrix), len(matrix[0])
 
     # round numpy answers to 2 dp
     def roundTo2Decimals(self, answer):
@@ -304,10 +303,13 @@ class PracticeExercise:
                         if inputText == "":
                             break
                         self.drawAnswerText(inputText)
-                        result, answer = self.submitAnswer(inputText, self.matrixList[exerciseIndex])
+                        try:
+                            result, answer = self.submitAnswer(inputText, self.matrixList[exerciseIndex])
+                            self.drawResult(result, answer)
+                        except TypeError:
+                            print("Input must be of type list")
                         inputBoxActive = False
                         answerSubmitted = True
-                        self.drawResult(result, answer)
 
                     elif endButton.collidepoint(mouse_pos):
                         self.drawEndScreen()
@@ -323,10 +325,13 @@ class PracticeExercise:
                         if inputText == "":
                             break
                         self.drawAnswerText(inputText)
-                        result, answer = self.submitAnswer(inputText, self.matrixList[exerciseIndex])
+                        try:
+                            result, answer = self.submitAnswer(inputText, self.matrixList[exerciseIndex])
+                            self.drawResult(result, answer)
+                        except TypeError:
+                            print("Input must be of type list")
                         inputBoxActive = False
                         answerSubmitted = True
-                        self.drawResult(result, answer)
 
                     # BACKSPACE key pressed
                     elif event.key == pygame.K_BACKSPACE:
