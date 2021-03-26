@@ -309,7 +309,7 @@ class PracticeExercise:
                         self.drawEndScreen()
 
                     elif mainMenuButton.collidepoint(mouse_pos):
-                        self.draw_window()
+                        running = False
 
                 # if key pressed and input box has been clicked
                 elif event.type == pygame.KEYDOWN and inputBoxActive:
