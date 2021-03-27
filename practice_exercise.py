@@ -363,6 +363,7 @@ class PracticeExercise:
                             print("================== END ==================")
                         self.draw_matrix_window(self.matrixList[0])
                         inputText = ""
+                        exerciseIndex = 0
                         answerSubmitted = False
                         mainMenuActive = False
                         practiceScreenActive = True
