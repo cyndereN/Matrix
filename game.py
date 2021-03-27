@@ -3,6 +3,8 @@ from settings import *
 from menu import *
 from practice_exercise import *
 from create_exercise_GUI import *
+from rankings import *
+
 
 class Game():
     def __init__(self):
@@ -15,22 +17,14 @@ class Game():
         self.clock = pygame.time.Clock()
         self.clock.tick(FPS)
         self.initialize_snow()
+        self.load_sound()
+        self.on_play = 1
+        self.muted = 0
         pygame.display.set_caption(TITLE)
+        self.r = Rankings(self)
         self.main_menu = MainMenu(self)
         self.credits = CreditsMenu(self)
         self.curr_menu = self.main_menu
-
-    def game_loop(self):
-        while self.playing:
-            self.check_events()
-            if self.BACK_KEY:
-                self.playing = False
-            self.display.fill(BLACK)
-            self.snoweffect_helper()
-            self.draw_text('Thanks for playing', 20, DISPLAY_W/2, DISPLAY_H/2)
-            self.window.blit(self.display, (0,0))
-            pygame.display.update()
-            self.reset_keys()
 
     def check_events(self):
         for event in pygame.event.get():
@@ -48,7 +42,25 @@ class Game():
                     self.DOWN_KEY = True
                 if event.key == pygame.K_UP:
                     self.UP_KEY = True
-            
+                if event.key == pygame.K_p:
+                    if self.on_play == 1:
+                        pygame.mixer.music.pause()
+                        self.on_play = 0
+                    elif self.on_play == 0:
+                        pygame.mixer.music.unpause()
+                        self.on_play = 1
+                if event.key == pygame.K_m:
+                    if self.muted == 1:
+                        for sound in self.sounds:
+                            sound.set_volume(.1)
+                            pygame.mixer.music.set_volume(1)
+                        self.muted = 0
+                    elif self.muted == 0:
+                        for sound in self.sounds:
+                            sound.set_volume(0)
+                            pygame.mixer.music.set_volume(0)
+                        self.muted = 1
+                            
     def reset_keys(self):
         self.UP_KEY, self.DOWN_KEY, self.START_KEY, self.BACK_KEY = False, False, False, False
 
@@ -67,38 +79,44 @@ class Game():
         self.display.blit(text_surface, text_rect)
 
     def start_exercise(self):
-        waiting = True
-        while waiting:
-            p = PracticeExercise()
-            p.main()
-            self.check_events()
-            if self.BACK_KEY:
-                waiting = False
-            self.reset_keys()
+        p = PracticeExercise()
+        p.main()
         
-
-    def import_exercise(self):
-        pass
 
     def create_exercise(self):
         matrix_editor = MatrixEditor()
         matrix_editor.main()
 
-
-    def rankings():
-        pass
-
-    def credits(self):
+    def rankings(self):
         waiting = True
         while waiting:
             self.display.fill(BLACK)
-            self.draw_text('Thanks for playing', 20, DISPLAY_W/2, DISPLAY_H/2)
+            self.snoweffect()
+            self.r.show_rankings()
             self.window.blit(self.display, (0,0))
             pygame.display.update()
             self.check_events()
             if self.BACK_KEY:
+                self.fill_sound.play()
                 waiting = False
             self.reset_keys()
+
+    def load_sound(self):
+        pygame.mixer.music.load("assets/sounds/theme.wav")
+        pygame.mixer.music.play(-1)
+        self.sounds = []
+        self.select_sound = pygame.mixer.Sound("assets/sounds/select.wav")
+        self.select_sound.set_volume(.1)
+        self.sounds.append(self.select_sound)
+        self.fill_sound = pygame.mixer.Sound("assets/sounds/fill.wav")
+        self.fill_sound.set_volume(.1)
+        self.sounds.append(self.fill_sound)
+        self.lose_sound = pygame.mixer.Sound("assets/sounds/lose.wav")
+        self.lose_sound.set_volume(.1)
+        self.sounds.append(self.lose_sound)
+        self.right_sound = pygame.mixer.Sound("assets/sounds/right.wav")
+        self.right_sound.set_volume(.1)
+        self.sounds.append(self.right_sound)
 
     def initialize_snow(self):
         self.snowflakes = []
@@ -115,7 +133,7 @@ class Game():
 
     def snoweffect_helper(self):
         for s in self.snowflakes:
-            s.y += 0.2
+            s.y += 1.5
             if (s.y > DISPLAY_H):
                 s.x = random.randrange(0,DISPLAY_W)
                 s.y = random.randrange(-50,-10)

@@ -6,7 +6,7 @@ DISPLAY_H = 580
 FPS = 60
 FONT_1 = "assets/8-BIT WONDER.TTF"
 FONT_2 = "assets/PressStart2P-vaV7.ttf"
-HS_FILE = "highscore.txt"
+HS_FILE = "data/highscore.txt"
 
 BLACK, WHITE = (0,0,0), (255,255,255)
 WINDOW_WIDTH, WINDOW_HEIGHT = 960, 580
