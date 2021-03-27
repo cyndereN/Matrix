@@ -3,7 +3,9 @@ import tkinter
 import tkinter.filedialog
 import pygame
 import ast
+import game
 from Exercise import Exercise
+from rankings import Rankings
 from settings import *
 
 
@@ -20,6 +22,8 @@ answerInputTextBox = pygame.Rect(330, 442, 390, 30)
 submitButton = pygame.Rect(DISPLAY_W/2-60, 520, 120, 40)
 endButton = pygame.Rect(DISPLAY_W-160, 80, 150, 40)
 mainMenuButton = pygame.Rect(DISPLAY_W/2-100, DISPLAY_H/2+200, 200, 50)
+usernameInputTextBox = pygame.Rect(DISPLAY_W/2-150, DISPLAY_H/2+100, 300, 30)
+saveButton = pygame.Rect(DISPLAY_W/2+188, DISPLAY_H/2+91, 100, 40)
 
 # init fonts
 customFont = pygame.font.Font(FONT_1, 30)
@@ -38,6 +42,8 @@ answerText = defaultFont.render("Answer: ", True, BLACK)
 submitText = smallFont.render("Submit", True, WHITE)
 endText = smallFont.render("End Game", True, WHITE)
 mainMenuText = smallFont.render("Main Menu", True, WHITE)
+usernameText = defaultFont.render("Username: ", True, BLACK)
+saveText = smallFont.render("Save", True, WHITE)
 
 
 class PracticeExercise:
@@ -64,6 +70,11 @@ class PracticeExercise:
     # generate random matrix data
     def generateData(self):
         return Exercise().generate_exercise(5)
+
+    def saveScore(self, username):
+        my_game = game.Game()
+        r = Rankings(my_game)
+        r.update_hs_file(username, str(self.score))
 
 
     # helper function to get rows x cols of matrix
@@ -168,11 +179,17 @@ class PracticeExercise:
         self.window.blit(displayText, (335, 450))
         pygame.display.update()
 
+    # display username textfield
+    def drawUsernameText(self, inputText):
+        displayText = answerFont.render(inputText, True, BLACK)
+        self.window.blit(displayText, (DISPLAY_W/2-150+8, DISPLAY_H/2+100+7))
+        pygame.display.update()
+
     # display result and handle score
     def drawResult(self, result, answer):
         if result:
             text = "Your answer is correct!"
-            self.score += 500
+            self.score += 100
             displayText = answerFont.render(text, True, BLACK)
             self.window.blit(displayText, (355, 490))
         else:
@@ -222,8 +239,12 @@ class PracticeExercise:
         self.window.fill(pygame.color.Color("grey"))
         scoreText = defaultFont.render("Score: " + str(self.score), True, BLACK)
         self.window.blit(scoreText, (DISPLAY_W/2-50, DISPLAY_H/2-100))
-        correctText = defaultFont.render("Number of correct questions: " + str(self.score//500), True, BLACK)
-        self.window.blit(correctText, (DISPLAY_W/2-140, DISPLAY_H/2+100))
+        correctText = defaultFont.render("Number of correct questions: " + str(self.score//100), True, BLACK)
+        self.window.blit(correctText, (DISPLAY_W/2-140, DISPLAY_H/2-30))
+        self.window.blit(usernameText, (DISPLAY_W/2-50, DISPLAY_H/2+50))
+        pygame.draw.rect(self.window, WHITE, usernameInputTextBox)
+        pygame.draw.rect(self.window, RED, saveButton)
+        self.window.blit(saveText, (DISPLAY_W/2+200, DISPLAY_H/2+100))
         pygame.draw.rect(self.window, RED, mainMenuButton)
         self.window.blit(mainMenuText, (DISPLAY_W/2-100+22, DISPLAY_H/2+200+15))
 
@@ -235,8 +256,13 @@ class PracticeExercise:
         running = True
         exerciseIndex = 0
         inputText = ""
-        inputBoxActive = False
+        usernameInputText = ""
+        answerInputBoxActive = False
+        usernameInputBoxActive = False
+        mainMenuActive = True
+        practiceScreenActive = False
         answerSubmitted = False
+        USERNAME_TEXTBOX_MAX_LENGTH = 30
         clock = pygame.time.Clock()
 
         self.draw_window()
@@ -252,11 +278,14 @@ class PracticeExercise:
 
                     # checks if mouse position is over buttons
 
-                    if loadButton.collidepoint(mouse_pos) or smallLoadButton.collidepoint(mouse_pos):
+                    if loadButton.collidepoint(mouse_pos) and mainMenuActive \
+                            or smallLoadButton.collidepoint(mouse_pos) and practiceScreenActive:
                         try:
                             self.prompt_file()
                             self.matrixList = self.loadData()
                             self.draw_matrix_window(self.matrixList[0])
+                            mainMenuActive = False
+                            practiceScreenActive = True
                         except IndexError:
                             pass
                         finally:
@@ -264,11 +293,15 @@ class PracticeExercise:
                             inputText = ""
                             answerSubmitted = False
 
-                    elif generateButton.collidepoint(mouse_pos):
+
+                    elif generateButton.collidepoint(mouse_pos) and mainMenuActive \
+                            or smallGenerateButton.collidepoint(mouse_pos) and practiceScreenActive:
                         self.matrixList = self.generateData()
                         self.draw_matrix_window(self.matrixList[0])
                         inputText = ""
                         answerSubmitted = False
+                        mainMenuActive = False
+                        practiceScreenActive = True
 
                     elif nextButton.collidepoint(mouse_pos):
                         try:
@@ -288,11 +321,15 @@ class PracticeExercise:
                         except IndexError:
                             exerciseIndex += 1
 
-                    elif answerInputTextBox.collidepoint(mouse_pos) and not answerSubmitted:
+                    elif answerInputTextBox.collidepoint(mouse_pos) and not answerSubmitted and practiceScreenActive:
                         pygame.draw.rect(self.window, TEXTBOX_ACTIVE, answerInputTextBox)
-                        inputBoxActive = True
+                        answerInputBoxActive = True
 
-                    elif submitButton.collidepoint(mouse_pos):
+                    elif usernameInputTextBox.collidepoint(mouse_pos) and not practiceScreenActive:
+                        pygame.draw.rect(self.window, TEXTBOX_ACTIVE, usernameInputTextBox)
+                        usernameInputBoxActive = True
+
+                    elif submitButton.collidepoint(mouse_pos) and practiceScreenActive:
                         pygame.draw.rect(self.window, WHITE, answerInputTextBox)
                         if inputText == "":
                             break
@@ -302,17 +339,22 @@ class PracticeExercise:
                             self.drawResult(result, answer)
                         except TypeError:
                             print("Input must be of type list")
-                        inputBoxActive = False
+                        answerInputBoxActive = False
                         answerSubmitted = True
 
-                    elif endButton.collidepoint(mouse_pos):
+                    elif endButton.collidepoint(mouse_pos) and practiceScreenActive:
+                        practiceScreenActive = False
                         self.drawEndScreen()
 
-                    elif mainMenuButton.collidepoint(mouse_pos):
+                    elif saveButton.collidepoint(mouse_pos) and not mainMenuActive and not practiceScreenActive:
+                        self.saveScore(usernameInputText)
+                        running = False
+
+                    elif mainMenuButton.collidepoint(mouse_pos) and not mainMenuActive and not practiceScreenActive:
                         running = False
 
                 # if key pressed and input box has been clicked
-                elif event.type == pygame.KEYDOWN and inputBoxActive:
+                elif event.type == pygame.KEYDOWN and answerInputBoxActive:
                     # ENTER key pressed
                     if event.key == pygame.K_RETURN:
                         pygame.draw.rect(self.window, WHITE, answerInputTextBox)
@@ -324,7 +366,7 @@ class PracticeExercise:
                             self.drawResult(result, answer)
                         except TypeError:
                             print("Input must be of type list")
-                        inputBoxActive = False
+                        answerInputBoxActive = False
                         answerSubmitted = True
 
                     # BACKSPACE key pressed
@@ -346,6 +388,36 @@ class PracticeExercise:
                             self.drawAnswerText(trimmedText)
                         else:
                             self.drawAnswerText(inputText)
+
+                # if key pressed and username input box has been clicked
+                elif event.type == pygame.KEYDOWN and usernameInputBoxActive:
+                    # ENTER key pressed
+                    if event.key == pygame.K_RETURN:
+                        pygame.draw.rect(self.window, WHITE, usernameInputTextBox)
+                        if usernameInputText == "":
+                            break
+                        self.drawUsernameText(usernameInputText)
+                        usernameInputBoxActive = False
+                        answerSubmitted = True
+                    # BACKSPACE key pressed
+                    elif event.key == pygame.K_BACKSPACE:
+                        usernameInputText = usernameInputText[:-1]
+                        if len(usernameInputText) >= USERNAME_TEXTBOX_MAX_LENGTH:
+                            trimmedText = usernameInputText[-USERNAME_TEXTBOX_MAX_LENGTH:]
+                            pygame.draw.rect(self.window, TEXTBOX_ACTIVE, usernameInputTextBox)
+                            self.drawUsernameText(trimmedText)
+                        else:
+                            pygame.draw.rect(self.window, TEXTBOX_ACTIVE, usernameInputTextBox)
+                            self.drawUsernameText(usernameInputText)
+
+                    else:
+                        usernameInputText += event.unicode
+                        if len(usernameInputText) >= USERNAME_TEXTBOX_MAX_LENGTH:
+                            trimmedText = usernameInputText[-USERNAME_TEXTBOX_MAX_LENGTH:]
+                            pygame.draw.rect(self.window, TEXTBOX_ACTIVE, usernameInputTextBox)
+                            self.drawUsernameText(trimmedText)
+                        else:
+                            self.drawUsernameText(usernameInputText)
 
             pygame.display.update()
             # limit frames
