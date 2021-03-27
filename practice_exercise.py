@@ -52,11 +52,9 @@ class PracticeExercise:
         self.filePath = ""
         self.matrixList = []
         self.score = 0
-<<<<<<< HEAD
         self.calculator = calculator()
-=======
         self.my_game = game.Game()
->>>>>>> refs/remotes/origin/main
+
 
     # file dialog to pick a file
     def prompt_file(self):
