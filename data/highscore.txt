@@ -1,5 +1,4 @@
 alice 150
-alice 150
 cc 120
 bob 100
 alice 100
@@ -7,4 +6,4 @@ gg 90
 mm 66
 cc 42
 alice 30
-alice 30
+Kathy 0

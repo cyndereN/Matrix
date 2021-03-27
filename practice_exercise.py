@@ -5,7 +5,6 @@ import pygame
 import ast
 import game
 from Exercise import Exercise
-from rankings import Rankings
 from settings import *
 
 
@@ -53,6 +52,7 @@ class PracticeExercise:
         self.filePath = ""
         self.matrixList = []
         self.score = 0
+        self.my_game = game.Game()
 
     # file dialog to pick a file
     def prompt_file(self):
@@ -72,9 +72,40 @@ class PracticeExercise:
         return Exercise().generate_exercise(5)
 
     def saveScore(self, username):
-        my_game = game.Game()
-        r = Rankings(my_game)
-        r.update_hs_file(username, str(self.score))
+        self.update_hs_file(username, str(self.score))
+
+    
+    def update_hs_file(self, name, score):
+        text = name + ' ' + score
+        scores = []
+        texts = []
+        with open(HS_FILE, 'r') as file_to_read:
+            while True:
+                line = file_to_read.readline()
+                if not line:
+                    break
+                line = line.strip('\n')
+                texts.append(line)
+        pos = 0
+        for item in texts:
+            lst = item.split()
+            scores.append(int(lst[1]))
+        for s in scores:
+            if int(score) >= s:
+                break
+            else:
+                pos += 1
+        texts.insert(pos, text)
+        x = len(texts)
+        if x > 10:
+            x = 10
+        with open(HS_FILE, 'a') as file_to_change:
+            file_to_change.seek(0)	
+            file_to_change.truncate()
+            for i in range(x-1):
+                file_to_change.write(texts[i]+'\n')
+            file_to_change.write(texts[x-1])
+
 
 
     # helper function to get rows x cols of matrix
