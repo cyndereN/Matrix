@@ -137,7 +137,9 @@ class PracticeExercise:
         if len(rounded) != len(submit_answers):
             return False, rounded
         if matrix.get_question_type() == 3:
-            eigenvector_answers = rounded[:]
+            eigenvector_answers = []
+            for rounded_vector in rounded:
+                eigenvector_answers.append(rounded_vector[:])
             for i in range(0, len(eigenvector_answers)):
                 self.calculator.normalised(eigenvector_answers[i])
             for submit_answer in submit_answers:
