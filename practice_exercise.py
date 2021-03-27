@@ -3,7 +3,7 @@ import tkinter
 import tkinter.filedialog
 import pygame
 import ast
-from exercise import Exercise
+from Exercise import Exercise
 from settings import *
 
 
