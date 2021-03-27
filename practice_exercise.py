@@ -3,11 +3,11 @@ import tkinter
 import tkinter.filedialog
 import pygame
 import ast
-from Exercise import Exercise
+from exercise import Exercise
 from settings import *
 
-pygame.init()
 
+pygame.init()
 
 # init buttons and textbox
 loadButton = pygame.Rect(DISPLAY_W/2-70, DISPLAY_H/2-100, 140, 50)
@@ -347,11 +347,6 @@ class PracticeExercise:
                         else:
                             self.drawAnswerText(inputText)
 
-
             pygame.display.update()
             # limit frames
             clock.tick(FPS)
-        pygame.quit()
-
-
-
