@@ -124,7 +124,7 @@ class Exercise:
                 factor = choice([-3,-2,-1,1,2,3])
                 value = factor * square_magnitude
             eigenvalues.append(value)
-            x_norm = self.calculator.norm_L2(x)
+            x_norm = self.calculator.squared_magnitude(x) ** 0.5
             x = self.calculator.dot(x,1 / x_norm)
             xt = self.calculator.T(x)
             M.append(x)

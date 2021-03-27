@@ -2,8 +2,8 @@ import sys
 import tkinter
 import tkinter.filedialog
 import pygame
-import ast
 import game
+from MatrixCalculator import calculator
 from Exercise import Exercise
 from rankings import Rankings
 from settings import *
@@ -53,6 +53,7 @@ class PracticeExercise:
         self.filePath = ""
         self.matrixList = []
         self.score = 0
+        self.calculator = calculator()
 
     # file dialog to pick a file
     def prompt_file(self):
@@ -87,27 +88,51 @@ class PracticeExercise:
 
     # check if submitted answer matches correct answer
     def submitAnswer(self, inputText, matrix):
-        lst = ast.literal_eval(inputText)
-
+        lst = eval(inputText)
+        if type(lst) == int:
+            lst = [lst]
         # return boolean and correct answer
         return self.checkSubmitAnswer(lst, matrix)
 
-    def checkSubmitAnswer(self, submit_answer, matrix):
+    def checkSubmitAnswer(self, submit_answers, matrix):
         answer = matrix.get_answer()
+        if(type(answer) == int):
+            answer = [answer]
         if matrix.get_question_type() == 6:
             rounded = answer
         else:
             rounded = self.roundTo2Decimals(answer)
-        if matrix.get_question_type() == 3 or matrix.get_question_type() == 4:
-            temp_answer = rounded.copy()
-            for item in submit_answer:
-                if item not in temp_answer:
+        if len(rounded) != len(submit_answers):
+            return False, rounded
+        if matrix.get_question_type() == 3:
+            eigenvector_answers = rounded[:]
+            for i in range(0, len(eigenvector_answers)):
+                self.calculator.normalised(eigenvector_answers[i])
+            for submit_answer in submit_answers:
+                self.calculator.normalised(submit_answer)
+                norm = submit_answer.copy()
+                self.calculator.nagetive(submit_answer)
+                nagetive_norm = submit_answer
+                if norm in eigenvector_answers:
+                    eigenvector_answers.remove(norm)
+                elif nagetive_norm in eigenvector_answers:
+                    eigenvector_answers.remove(nagetive_norm)
+                else:
+                    return False, rounded
+            return True, rounded
+
+        elif matrix.get_question_type() == 4:
+            if len(rounded) != len(submit_answers):
+                return False, rounded
+            eigenvalue_answer = rounded[:]
+            for item in submit_answers:
+                if item not in eigenvalue_answer:
                     return False, rounded
                 else:
-                    temp_answer.remove(item)
+                    eigenvalue_answer.remove(item)
             return True, rounded
         else:
-            return submit_answer == answer, rounded
+            return submit_answers == answer, rounded
 
 
     # display question text on screen
@@ -297,6 +322,13 @@ class PracticeExercise:
                     elif generateButton.collidepoint(mouse_pos) and mainMenuActive \
                             or smallGenerateButton.collidepoint(mouse_pos) and practiceScreenActive:
                         self.matrixList = self.generateData()
+                        if(DEBUG):
+                            question_number = 1
+                            print("=============Question Answers=============")
+                            for question in self.matrixList:
+                                print("Question number %d, answer: %s" % (question_number, question.get_answer()))
+                                question_number += 1
+                            print("================== END ==================")
                         self.draw_matrix_window(self.matrixList[0])
                         inputText = ""
                         answerSubmitted = False

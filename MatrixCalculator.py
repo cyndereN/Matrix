@@ -58,8 +58,15 @@ class calculator:
     def T(self,Matrix1):
         return np.transpose(Matrix1).astype(float).tolist()
 
-    def norm_L2(self,Matrix1):
-        return np.linalg.norm(Matrix1).tolist()
+    def normalised(self, vector):
+        squared_magnitude = self.squared_magnitude(vector)
+        for i in range (0, len(vector)):
+            vector[i] = vector[i] / squared_magnitude ** 0.5
+            vector[i] = round(vector[i], 2)
+
+    def nagetive(self, vector):
+        for i in range (0, len(vector)):
+            vector[i] = -vector[i]
 
     def squared_magnitude(self,Matrix1):
         squared_mag = 0
@@ -91,7 +98,7 @@ if __name__ == "__main__":
 
     ## [[-8, -2, -2], [-2, -9, -1], [-2, -1, -9]]
     print(eigenvector)
-    print(cal.norm_L2([2,2,2]))
+    print(cal.normalised([-0.5773502691896261, -0.5773502691896256, -0.5773502691896257]))
     # print(str(eigenvector) + " type: " + str(type(eigenvector)))
     # print(" type of eigenvector: " + str(type(eigenvector[0])) + " type of element in it " + str(type(eigenvector[0][0])))
     # T = cal.T([[7,5,5],[0,0,0],[0,0,0]])
