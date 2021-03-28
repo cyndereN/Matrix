@@ -415,10 +415,13 @@ class PracticeExercise:
 
                     elif saveButton.collidepoint(mouse_pos) and not mainMenuActive and not practiceScreenActive:
                         self.saveScore(usernameInputText)
+                        pygame.display.set_caption(TITLE)
                         running = False
 
                     elif mainMenuButton.collidepoint(mouse_pos) and not mainMenuActive and not practiceScreenActive:
+                        pygame.display.set_caption(TITLE)
                         running = False
+                        
 
                 # if key pressed and input box has been clicked
                 elif event.type == pygame.KEYDOWN and answerInputBoxActive:
