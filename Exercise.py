@@ -50,11 +50,13 @@ class Exercise:
     # def get_exercise(self):
     #     return self.question_set
 
-    def generate_exercise(self,size):
+    def generate_exercise(self, size, question_type_set=None):
+        if question_type_set is None:
+            question_type_set = [ADDITION, SUBTRACTION, MULTIPLICATION, EIGENVALUE, EIGENVECTOR, INVERSE, DETERMINANT]
         self.question_set.clear()
         self.question_set_size = size
         for i in range(size):
-            question_type = randint(ADDITION,DETERMINANT)
+            question_type = choice(question_type_set)
             self.question_set.append(self.generate_question(question_type))
         return self.question_set
 
