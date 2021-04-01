@@ -16,7 +16,7 @@ Text = [
      "Find the product of this calculation",],
     "Find the eigenvectors of this matrix",
     "Find the eigenvalues of this matrix",
-    "Find the inverse of this matrix",
+    "Find the inverse of this matrix (to 2 d.p)",
     "Find the determinant of this matrix"
     ]
 

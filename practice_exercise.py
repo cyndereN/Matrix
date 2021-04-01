@@ -173,9 +173,9 @@ class PracticeExercise:
     def drawMatrixQuestion(self, matrix):
         numFont = pygame.font.SysFont('Arial', 15)
         questionText = matrix.get_text()
-        pygame.draw.rect(self.window, WHITE, (DISPLAY_W/2-120, 110, 220, 40))
+        pygame.draw.rect(self.window, WHITE, (DISPLAY_W/2-140, 110, 280, 40))
         text = numFont.render(questionText, True, BLACK)
-        self.window.blit(text, (DISPLAY_W/2-110, 120))
+        self.window.blit(text, (DISPLAY_W/2-120, 120))
 
 
     # display matrix data on screen
